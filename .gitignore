@@ -1,1 +1,4 @@
 node_modules/*
+
+# Configuração da IDE
+.idea/*
