@@ -2,7 +2,12 @@ import mongoose from 'mongoose';
 
 function connect() {
     const uri = `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
-    const options = { useNewUrlParser: true, useUnifiedTopology: true };
+    const options = {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useCreateIndex: true,
+        useFindAndModify: false,
+    };
 
     console.log(`Tentando conectar ao banco de dados em ${uri}`);
     const connection = mongoose.connect(uri, options);

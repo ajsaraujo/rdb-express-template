@@ -1,0 +1,31 @@
+### Raiz
+GET http://localhost:8080/api
+
+### Criar usuário
+POST http://localhost:8080/api/user HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Sófocles Teamildo",
+    "email": "softeam@gmail.com",
+    "password": "thecakeisalie"
+}
+
+### Obter todos os usuários
+GET http://localhost:8080/api/user HTTP/1.1
+
+### Obter um usuário pelo ID
+GET http://localhost:8080/api/user/5f4d461db18acf384881fbba HTTP/1.1
+
+### Atualizar dados do usuário
+PUT http://localhost:8080/api/user/5f4e4158ab1bd2315c86c342 HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Sófocles Teamildo Espírito Januário Cruz",
+    "email": "softeamejc@gmail.com",
+    "password": "theprincessisinanothercastle"
+}
+
+### Deletar usuário
+DELETE http://localhost:8080/api/user/5f4e407f814fa02308b3aceb HTTP/1.1
