@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import { config } from 'dotenv';
+import compression from 'compression';
+
 import database from './database';
 import router from './router';
 
@@ -12,6 +14,7 @@ async function run() {
     const app = express();
 
     app.use(cors());
+    app.use(compression());
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     app.use('/api', router);
