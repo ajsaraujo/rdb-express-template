@@ -5,19 +5,27 @@ import compression from 'compression';
 
 import database from './database';
 import router from './router';
+import log from './middlewares/log';
+
+function createApp() {
+    const app = express();
+    
+    app.use(cors());
+    app.use(compression());
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    app.use(log());
+    app.use('/api', router);
+
+    return app;
+}
 
 async function run() {
     config();
 
     await database.connect();
 
-    const app = express();
-
-    app.use(cors());
-    app.use(compression());
-    app.use(express.json());
-    app.use(express.urlencoded({ extended: true }));
-    app.use('/api', router);
+    const app = createApp();
 
     app.listen(process.env.APP_PORT);
 

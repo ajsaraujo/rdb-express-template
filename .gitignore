@@ -1,4 +1,7 @@
 node_modules/*
 
+# Log da aplicação
+*.log
+
 # Configuração da IDE
 .idea/*
