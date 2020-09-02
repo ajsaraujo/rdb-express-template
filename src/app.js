@@ -5,7 +5,7 @@ import compression from 'compression';
 
 import database from './database';
 import router from './router';
-import log from './middlewares/log';
+import logErrors from './middlewares/logErrors';
 
 function createApp() {
     const app = express();
@@ -14,7 +14,7 @@ function createApp() {
     app.use(compression());
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
-    app.use(log());
+    app.use(logErrors());
     app.use('/api', router);
 
     return app;
