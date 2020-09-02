@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const LogSchema = new mongoose.Schema({
-    log: { 
+    content: { 
         type: String, 
         required: true 
     },

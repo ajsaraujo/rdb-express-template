@@ -1,23 +1,13 @@
 import morgan from 'morgan';
 import { PassThrough } from 'stream';
 import { carry } from 'carrier';
-import { Log } from '../models/Log';
-
-async function logToMongo(log) {
-    console.log('Criando documento log...');
-
-    try {
-        await Log.create({ log });
-    } catch ({ message }) {
-        console.log(message);
-    }
-}
+import LogController from '../controllers/LogController';
 
 function createStream() {
     const stream = new PassThrough();
     
     const lineStream = carry(stream);
-    lineStream.on('line', logToMongo);
+    lineStream.on('line', LogController.create);
 
     return stream;
 }

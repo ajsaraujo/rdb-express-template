@@ -29,3 +29,6 @@ content-type: application/json
 
 ### Deletar usuário
 DELETE http://localhost:8080/api/user/5f4e407f814fa02308b3aceb HTTP/1.1
+
+### Obter logs
+GET http://localhost:8080/api/log
