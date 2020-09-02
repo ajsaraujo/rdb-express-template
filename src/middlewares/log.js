@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 
 const REQUEST_DATA = '":req[header] :req-body (:req[content-length] bytes)"\n';
-const RESPONSE_DATA = '":res[header] :res-body (:res[content-length] bytes)"\n';
+const RESPONSE_DATA = '":res[header] :res[content-length] bytes"\n';
 
 const DEVELOPMENT_LOG_FORMAT = '":method :url :status :response-time[0] ms"\n'
     + REQUEST_DATA
@@ -30,7 +30,6 @@ function createStream() {
 
 function createMorganTokens() {
     morgan.token('req-body', (req, res) => JSON.stringify(req.body));
-    morgan.token('res-body', (req, res) => JSON.stringify(res.body));
 }
 
 function log() {
