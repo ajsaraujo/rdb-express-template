@@ -11,6 +11,7 @@ const UserSchema = new Schema(
 
         email: {
             type: String,
+            lowercase: true,
             required: true,
             unique: true,
         },
@@ -19,7 +20,7 @@ const UserSchema = new Schema(
             type: String,
             required: true,
             minlength: 8,
-            maxlength: 40
+            maxlength: 40,
         },
     },
 

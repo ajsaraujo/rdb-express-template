@@ -23,9 +23,9 @@ async function update(req, res) {
             return res.status(404).json({ message: `Não há usuário com o id ${req.params.id}` });
         }
 
-        // Atualizamos manualmente e chamamos save. 
+        // Atualizamos manualmente e chamamos save.
         const { name, email, password } = req.body;
-        
+
         user.name = name;
         user.email = email;
         user.password = password;
