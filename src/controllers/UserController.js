@@ -16,11 +16,21 @@ async function create(req, res) {
 
 async function update(req, res) {
     try {
-        const user = await User.findByIdAndUpdate(req.params.id, req.body);
+        // findByIdAndUpdate não aciona 'save', portanto não encripta a senha.
+        const user = await User.findById(req.params.id);
 
         if (!user) {
             return res.status(404).json({ message: `Não há usuário com o id ${req.params.id}` });
         }
+
+        // Atualizamos manualmente e chamamos save.
+        const { name, email, password } = req.body;
+        
+        user.name = name;
+        user.email = email;
+        user.password = password;
+
+        await user.save();
 
         return res.status(200).json(user);
     } catch ({ message }) {

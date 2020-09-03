@@ -7,7 +7,7 @@ content-type: application/json
 
 {
     "name": "Sófocles Teamildo",
-    "email": "softeam@gmail.com",
+    "email": "softeamejc7@gmail.com",
     "password": "thecakeisalie"
 }
 
@@ -18,17 +18,17 @@ GET http://localhost:8080/api/user HTTP/1.1
 GET http://localhost:8080/api/user/5f4d461db18acf384881fbba HTTP/1.1
 
 ### Atualizar dados do usuário
-PUT http://localhost:8080/api/user/5f4e4158ab1bd2315c86c342 HTTP/1.1
+PUT http://localhost:8080/api/user/5f4e8cc5fe1b5b2340b6a1da HTTP/1.1
 content-type: application/json
 
 {
     "name": "Sófocles Teamildo Espírito Januário Cruz",
-    "email": "softeamejc@gmail.com",
+    "email": "softeamejc6@gmail.com",
     "password": "theprincessisinanothercastle"
 }
 
 ### Deletar usuário
-DELETE http://localhost:8080/api/user/5f4e407f814fa02308b3aceb HTTP/1.1
+DELETE http://localhost:8080/api/user/5f4e4158ab1bd2315c86c342 HTTP/1.1
 
 ### Obter logs
 GET http://localhost:8080/api/log
