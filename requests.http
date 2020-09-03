@@ -18,17 +18,17 @@ GET http://localhost:8080/api/user HTTP/1.1
 GET http://localhost:8080/api/user/5f4d461db18acf384881fbba HTTP/1.1
 
 ### Atualizar dados do usuário
-PUT http://localhost:8080/api/user/5f4e8cc5fe1b5b2340b6a1da HTTP/1.1
+PUT http://localhost:8080/api/user/5f51234205dc3d1e2c613618 HTTP/1.1
 content-type: application/json
 
 {
     "name": "Sófocles Teamildo Espírito Januário Cruz",
-    "email": "softeamejc6@gmail.com",
-    "password": "theprincessisinanothercastle"
+    "email": "softeam@gmail.com",
+    "password": "thecakeislie"
 }
 
 ### Deletar usuário
-DELETE http://localhost:8080/api/user/5f51162b952ee025e87d0229 HTTP/1.1
+DELETE http://localhost:8080/api/user/5f51193930cb910f4cf8e5ec HTTP/1.1
 
 ### Autenticar
 POST http://localhost:8080/api/auth HTTP/1.1
@@ -36,7 +36,7 @@ content-type: application/json
 
 {
     "email": "softeam@gmail.com",
-    "password": "thecakeisalie"
+    "password": "thecakeislie"
 }
 
 ### Obter logs
