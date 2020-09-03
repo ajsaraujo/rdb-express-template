@@ -1,23 +1,14 @@
 import { User } from '../models/User';
 
-async function emailInUse(email) {
-    try {
-        const user = await User.findOne({ email });
-        return user !== null;
-    } catch (error) {
-        return false;
-    }
-}
-
 async function create(req, res) {
     try {
-        const inUse = await emailInUse(req.body.email);
-
-        if (inUse) {
+        if (req.emailInUse) {
             return res.status(400).json({ message: `O email ${req.body.email} já está em uso.` });
         }
 
         const user = await User.create(req.body);
+
+        user.password = undefined;
 
         return res.status(201).json(user);
     } catch ({ message }) {
@@ -25,13 +16,19 @@ async function create(req, res) {
     }
 }
 
+// findByIdAndUpdate não aciona 'save'. Atualizamos e chamamos save manualmente.
 async function update(req, res) {
     try {
-        const user = await User.findByIdAndUpdate(req.params.id, req.body);
+        const { email, password } = req.body;
 
-        if (!user) {
-            return res.status(404).json({ message: `Não há usuário com o id ${req.params.id}` });
-        }
+        const user = await User.findById(req.userId).select('+password');
+
+        user.email = email;
+        user.password = password;
+
+        await user.save();
+
+        user.password = undefined;
 
         return res.status(200).json(user);
     } catch ({ message }) {
@@ -50,10 +47,10 @@ async function getAll(req, res) {
 
 async function getById(req, res) {
     try {
-        const user = await User.findById(req.params.id);
+        const user = await User.findById(req.userId);
 
         if (!user) {
-            return res.status(404).json({ message: `Não há usuário com o ID ${req.params.id}.` });
+            return res.status(404).json({ message: `Não há usuário com o ID ${req.userId}.` });
         }
 
         return res.status(200).json(user);
@@ -64,7 +61,7 @@ async function getById(req, res) {
 
 async function remove(req, res) {
     try {
-        const user = await User.findByIdAndRemove(req.params.id);
+        const user = await User.findByIdAndRemove(req.userId);
 
         if (!user) {
             return res.status(404).json({ message: 'Usuário não encontrado.' });

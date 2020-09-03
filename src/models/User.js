@@ -1,7 +1,8 @@
-import mongoose from 'mongoose';
+import { Schema, model } from 'mongoose';
 import Joi from 'joi';
+import PasswordUtils from '../utils/PasswordUtils';
 
-const UserSchema = new mongoose.Schema(
+const UserSchema = new Schema(
     {
         name: {
             type: String,
@@ -10,6 +11,7 @@ const UserSchema = new mongoose.Schema(
 
         email: {
             type: String,
+            lowercase: true,
             required: true,
             unique: true,
         },
@@ -17,6 +19,8 @@ const UserSchema = new mongoose.Schema(
         password: {
             type: String,
             required: true,
+            minlength: 8,
+            maxlength: 40,
             select: false,
         },
     },
@@ -24,11 +28,29 @@ const UserSchema = new mongoose.Schema(
     { timeStamps: true },
 );
 
-const User = mongoose.model('User', UserSchema);
-const userRules = Joi.object({
-    name: Joi.string().pattern(new RegExp('^[A-Za-zÁÉÍÓÚáéíóúãõÃÕâêôÂÊÔ ]+$')).required(),
-    email: Joi.string().email().required(),
-    password: Joi.string().min(8).required(),
+// Deve-se usar function() e não arrow function por causa do this.
+UserSchema.pre('save', async function(next) {
+    if (this.isModified('password')) {
+        this.password = await PasswordUtils.encrypt(this.password);
+    }
+
+    next();
 });
 
-export { User, userRules };
+const User = model('User', UserSchema);
+
+const emailRules = Joi.string().email().required();
+const passwordRules = Joi.string().min(8).max(40).required();
+
+const userRules = Joi.object({
+    name: Joi.string().pattern(new RegExp('^[A-Za-zÁÉÍÓÚáéíóúãõÃÕâêôÂÊÔ ]+$')).required(),
+    email: emailRules,
+    password: passwordRules,
+});
+
+const authRules = Joi.object({
+    email: emailRules,
+    password: passwordRules,
+});
+
+export { User, userRules, authRules };

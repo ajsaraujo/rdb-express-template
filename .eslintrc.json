@@ -12,5 +12,6 @@
     },
     "rules": {
         "indent": ["error", 4],
+        "semi": 2
     }
 }
