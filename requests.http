@@ -18,7 +18,8 @@ GET http://localhost:8080/api/user HTTP/1.1
 GET http://localhost:8080/api/user/5f4d461db18acf384881fbba HTTP/1.1
 
 ### Atualizar dados do usuário
-PUT http://localhost:8080/api/user/5f51234205dc3d1e2c613618 HTTP/1.1
+PUT http://localhost:8080/api/user/ HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNTEyMzQyMDVkYzNkMWUyYzYxMzYxOCIsImlhdCI6MTU5OTE2NjQ5NywiZXhwIjoxNTk5MjUyODk3fQ.ih89brbLzvAPjYXUP2dPjKYyPrV9DtsyMYLXVD2ReqM
 content-type: application/json
 
 {
