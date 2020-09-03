@@ -2,7 +2,8 @@ import { Router } from 'express';
 
 import UserController from './controllers/UserController';
 import LogController from './controllers/LogController';
-import { userRules } from './models/User';
+import SessionController from './controllers/SessionController';
+import { userRules, authRules } from './models/User';
 import validate from './middlewares/validate';
 import checkId from './middlewares/checkId';
 import emailInUse from './middlewares/emailInUse';
@@ -17,6 +18,7 @@ router.get('/user', UserController.getAll);
 router.get('/user/:id', checkId, UserController.getById);
 router.delete('/user/:id', checkId, UserController.remove);
 
+router.post('/auth', validate(authRules), SessionController.auth);
 router.get('/log', LogController.get);
 
 export default router;

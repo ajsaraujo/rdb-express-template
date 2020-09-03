@@ -7,7 +7,7 @@ content-type: application/json
 
 {
     "name": "Sófocles Teamildo",
-    "email": "softeamejc7@gmail.com",
+    "email": "softeam@gmail.com",
     "password": "thecakeisalie"
 }
 
@@ -28,7 +28,16 @@ content-type: application/json
 }
 
 ### Deletar usuário
-DELETE http://localhost:8080/api/user/5f4e4158ab1bd2315c86c342 HTTP/1.1
+DELETE http://localhost:8080/api/user/5f51162b952ee025e87d0229 HTTP/1.1
+
+### Autenticar
+POST http://localhost:8080/api/auth HTTP/1.1
+content-type: application/json
+
+{
+    "email": "softeam@gmail.com",
+    "password": "thecakeisalie"
+}
 
 ### Obter logs
 GET http://localhost:8080/api/log

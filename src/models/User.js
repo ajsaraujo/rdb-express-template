@@ -37,10 +37,18 @@ UserSchema.pre('save', async function(next) {
 
 const User = model('User', UserSchema);
 
+const emailRules = Joi.string().email().required();
+const passwordRules = Joi.string().min(8).max(40).required();
+
 const userRules = Joi.object({
     name: Joi.string().pattern(new RegExp('^[A-Za-zÁÉÍÓÚáéíóúãõÃÕâêôÂÊÔ ]+$')).required(),
-    email: Joi.string().email().required(),
-    password: Joi.string().min(8).max(40).required(),
+    email: emailRules,
+    password: passwordRules,
 });
 
-export { User, userRules };
+const authRules = Joi.object({
+    email: emailRules,
+    password: passwordRules,
+});
+
+export { User, userRules, authRules };
