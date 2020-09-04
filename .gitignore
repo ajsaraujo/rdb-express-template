@@ -5,3 +5,6 @@ node_modules/*
 
 # Configuração da IDE
 .idea/*
+
+# Build de produção
+build/*
