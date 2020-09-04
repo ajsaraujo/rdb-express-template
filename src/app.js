@@ -18,7 +18,7 @@ async function createApp() {
 
     app.use('/api', router);
 
-    await database.connect();
+    app.database = database;
 
     return app;
 }

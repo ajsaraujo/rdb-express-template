@@ -1,17 +1,17 @@
 import { Schema, model } from 'mongoose';
 
 const LogSchema = new Schema({
-    content: { 
-        type: String, 
-        required: true 
+    content: {
+        type: String,
+        required: true,
     },
 
     date: {
         type: Date,
-        default: Date.now
-    }
+        default: Date.now,
+    },
 });
 
 const Log = model('Log', LogSchema);
 
-export { Log };
+export default Log;

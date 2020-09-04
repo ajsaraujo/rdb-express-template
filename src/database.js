@@ -9,18 +9,11 @@ function connect() {
         useFindAndModify: false,
     };
 
-    console.log(`Tentando conectar ao banco de dados em ${uri}`);
-    const connection = mongoose.connect(uri, options);
-
-    mongoose.connection.once('open', () => {
-        console.log('A aplicação conectou ao banco de dados com sucesso.');
-    });
-
-    mongoose.connection.on('error', () => {
-        console.log('Erro ao conectar com o banco de dados.');
-    });
-
-    return connection;
+    mongoose.connect(uri, options);
 }
 
-export default { connect };
+function close() {
+    mongoose.connection.close();
+}
+
+export default { connect, close, connection: mongoose.connection };
