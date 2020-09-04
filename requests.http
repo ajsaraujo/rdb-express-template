@@ -15,29 +15,30 @@ content-type: application/json
 GET http://localhost:8080/api/user HTTP/1.1
 
 ### Obter um usuário pelo ID
-GET http://localhost:8080/api/user/5f4d461db18acf384881fbba HTTP/1.1
+GET http://localhost:8080/api/user/5f5229a76ea5903b60ae9471 HTTP/1.1
 
 ### Atualizar dados do usuário
 PUT http://localhost:8080/api/user/ HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNTEyMzQyMDVkYzNkMWUyYzYxMzYxOCIsImlhdCI6MTU5OTE2NjQ5NywiZXhwIjoxNTk5MjUyODk3fQ.ih89brbLzvAPjYXUP2dPjKYyPrV9DtsyMYLXVD2ReqM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNTIyOWE3NmVhNTkwM2I2MGFlOTQ3MSIsImlhdCI6MTU5OTIyMDMxMywiZXhwIjoxNTk5MzA2NzEzfQ.n749Ukt5JTfKSiTRKzO-ho2pS1smDET1h-iXnj437z4
 content-type: application/json
 
 {
     "name": "Sófocles Teamildo Espírito Januário Cruz",
-    "email": "softeam@gmail.com",
+    "email": "softeam1@gmail.com",
     "password": "thecakeislie"
 }
 
 ### Deletar usuário
-DELETE http://localhost:8080/api/user/5f51193930cb910f4cf8e5ec HTTP/1.1
+DELETE http://localhost:8080/api/user HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNTIyOWE3NmVhNTkwM2I2MGFlOTQ3MSIsImlhdCI6MTU5OTIyMDMxMywiZXhwIjoxNTk5MzA2NzEzfQ.n749Ukt5JTfKSiTRKzO-ho2pS1smDET1h-iXnj437z4
 
 ### Autenticar
 POST http://localhost:8080/api/auth HTTP/1.1
 content-type: application/json
 
 {
-    "email": "softeam@gmail.com",
-    "password": "thecakeislie"
+    "email": "softeam1@gmail.com",
+    "password": "thecakeisalie"
 }
 
 ### Obter logs

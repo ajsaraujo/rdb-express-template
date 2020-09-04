@@ -13,9 +13,9 @@ const router = Router();
 
 router.get('/', (req, res) => res.status(200).json({ message: 'Seja bem vindo!' }));
 
+router.get('/user/', limitRequests.slightly, UserController.getAll);
+router.get('/user/:id', limitRequests.slightly, UserController.getById);
 router.put('/user', limitRequests.slightly, verifyToken, validate(userRules), UserController.update);
-router.get('/user', limitRequests.slightly, UserController.getAll);
-router.get('/user', limitRequests.slightly, UserController.getById);
 router.delete('/user', limitRequests.slightly, verifyToken, UserController.remove);
 
 router.get('/log', LogController.get);

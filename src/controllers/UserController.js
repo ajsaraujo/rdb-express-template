@@ -19,10 +19,11 @@ async function create(req, res) {
 // findByIdAndUpdate não aciona 'save'. Atualizamos e chamamos save manualmente.
 async function update(req, res) {
     try {
-        const { email, password } = req.body;
+        const { name, email, password } = req.body;
 
         const user = await User.findById(req.userId).select('+password');
 
+        user.name = name;
         user.email = email;
         user.password = password;
 
@@ -47,10 +48,10 @@ async function getAll(req, res) {
 
 async function getById(req, res) {
     try {
-        const user = await User.findById(req.userId);
+        const user = await User.findById(req.params.id);
 
         if (!user) {
-            return res.status(404).json({ message: `Não há usuário com o ID ${req.userId}.` });
+            return res.status(404).json({ message: `Não há usuário com o ID ${req.params.id}.` });
         }
 
         return res.status(200).json(user);
