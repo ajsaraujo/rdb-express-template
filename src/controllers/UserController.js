@@ -23,6 +23,10 @@ async function update(req, res) {
 
         const user = await User.findById(req.userId).select('+password');
 
+        if (!user) {
+            return res.status(404).json({ message: `Não foi encontrado usuário com o ID ${req.userId}` });
+        }
+
         user.name = name;
         user.email = email;
         user.password = password;

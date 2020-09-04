@@ -15,11 +15,11 @@ content-type: application/json
 GET http://localhost:8080/api/user HTTP/1.1
 
 ### Obter um usuário pelo ID
-GET http://localhost:8080/api/user/5f5229a76ea5903b60ae9471 HTTP/1.1
+GET http://localhost:8080/api/user/5f1234205dc3d1e2c613618 HTTP/1.1
 
 ### Atualizar dados do usuário
 PUT http://localhost:8080/api/user/ HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNTIyOWE3NmVhNTkwM2I2MGFlOTQ3MSIsImlhdCI6MTU5OTIyMDMxMywiZXhwIjoxNTk5MzA2NzEzfQ.n749Ukt5JTfKSiTRKzO-ho2pS1smDET1h-iXnj437z4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNTEyMzQyMDVkYzNkMWUyYzYxMzYxOCIsImlhdCI6MTU5OTI1MDAzOSwiZXhwIjoxNTk5MzM2NDM5fQ.szbbZRQpWAxdFvUUnZ1mrHGksMv5aKsXKXvpnYJSyEg
 content-type: application/json
 
 {
