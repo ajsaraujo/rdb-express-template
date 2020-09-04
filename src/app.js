@@ -1,9 +1,7 @@
 import express from 'express';
 import cors from 'cors';
-import { config } from 'dotenv';
 import compression from 'compression';
 import helmet from 'helmet';
-
 import database from './database';
 import router from './router';
 import logErrors from './middlewares/logErrors';
@@ -20,19 +18,9 @@ async function createApp() {
 
     app.use('/api', router);
 
+    await database.connect();
+
     return app;
 }
 
-async function run() {
-    config();
-
-    await database.connect();
-
-    const app = await createApp();
-
-    app.listen(process.env.APP_PORT, () => {
-        console.log(`A aplicação está escutando na porta ${process.env.APP_PORT}`);
-    });
-}
-
-export default { run };
+export default createApp;

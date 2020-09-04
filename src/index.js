@@ -1,3 +1,12 @@
-import app from './app';
+import { config } from 'dotenv';
+import createApp from './app';
 
-app.run();
+(async () => {
+    config();
+
+    const app = await createApp();
+
+    app.listen(process.env.APP_PORT, () => {
+        console.log(`O app está escutando na porta ${process.env.APP_PORT}!`);
+    });
+})();
