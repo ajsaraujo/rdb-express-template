@@ -1,27 +1,20 @@
+import path from 'path';
 import { Router } from 'express';
-
-import UserController from './controllers/UserController';
-import LogController from './controllers/LogController';
-import SessionController from './controllers/SessionController';
-import { userRules, authRules } from './models/User';
-import verifyToken from './middlewares/verifyToken';
-import validate from './middlewares/validate';
-import emailInUse from './middlewares/emailInUse';
-import limitRequests from './middlewares/limitRequests';
+import DirectoryUtils from './utils/DirectoryUtils';
 
 const router = Router();
 
-router.get('/', (req, res) => res.status(200).json({ message: 'Seja bem vindo!' }));
+(async () => {
+    const routesDirectory = path.join(__dirname, '/routes');
+    const routes = await DirectoryUtils.getFilesInDirectory(routesDirectory, 'Route.js');
 
-router.get('/user/', limitRequests.slightly, UserController.getAll);
-router.get('/user/:id', limitRequests.slightly, UserController.getById);
-router.put('/user', limitRequests.slightly, verifyToken, validate(userRules), UserController.update);
-router.delete('/user', limitRequests.slightly, verifyToken, UserController.remove);
+    routes.forEach(route => {
+        router.use(route.name, route.router);
+    });
 
-router.get('/log', LogController.get);
+    router.get('/', (req, res) => res.status(200).json({ message: 'Seja bem vindo!' }));
 
-router.use(limitRequests.heavily);
-router.post('/register', validate(userRules), emailInUse, UserController.create);
-router.post('/auth', validate(authRules), SessionController.auth);
+    return router;
+})();
 
 export default router;

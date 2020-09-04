@@ -12,6 +12,7 @@
     },
     "rules": {
         "indent": ["error", 4],
-        "semi": 2
+        "semi": 2,
+        "arrow-parens": "off"
     }
 }
