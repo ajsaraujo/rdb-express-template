@@ -25,7 +25,6 @@ function logErrors() {
         options.stream = createStream();
     } else {
         format = 'dev';
-        format = DEVELOPMENT_LOG_FORMAT;
     }
 
     return morgan(format, options);

@@ -1,4 +1,4 @@
-import { Log } from '../models/Log';
+import Log from '../models/Log';
 
 async function create(content) {
     try {
@@ -10,7 +10,7 @@ async function create(content) {
 
 async function get(req, res) {
     try {
-        const logs = await Log.find().select('-__v -_id');
+        const logs = await Log.find();
         return res.status(200).json(logs);
     } catch ({ message }) {
         return res.status(500).json({ message });
