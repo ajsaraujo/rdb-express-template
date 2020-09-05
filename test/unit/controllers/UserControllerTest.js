@@ -210,6 +210,47 @@ describe('UserController', () => {
         });
     });
 
+    describe('remove()', () => {
+        beforeEach(() => {
+            req.userId = '123456789000';
+            User.findByIdAndRemove = sandbox.stub();
+        });
+
+        it('should return 404 if user was not found', async () => {
+            User.findByIdAndRemove.resolves(null);
+
+            await userController.remove(req, res);
+
+            expect(res.status.calledWith(404)).to.be.true;
+            expect(res.json.calledWith({ message: 'Usuário não encontrado.' })).to.be.true;
+        });
+
+        it('should delete the user with the given id and return 200', async () => {
+            const user = {
+                name: 'Mor Tod Asilva',
+                email: 'mortodasilva@softeam.com.br',
+                password: 'senhaencriptada'
+            };
+
+            User.findByIdAndRemove.resolves(user);
+
+            await userController.remove(req, res);
+
+            expect(User.findByIdAndRemove.calledWith(req.userId)).to.be.true;
+            expect(res.status.calledWith(200)).to.be.true;
+            expect(res.json.calledWith(user)).to.be.true;
+        });
+
+        it('should return 500 if an error is thrown', async () => {
+            User.findByIdAndRemove.rejects({ message: 'Não deu pra deletar =/' });
+
+            await userController.remove(req, res);
+
+            expect(res.status.calledWith(500)).to.be.true;
+            expect(res.json.calledWith({ message: 'Não deu pra deletar =/' })).to.be.true;
+        });
+    });
+
     afterEach(() => {
         sandbox.restore();
     });
