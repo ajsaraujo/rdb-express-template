@@ -82,6 +82,12 @@ describe('UserController', () => {
         beforeEach(() => {
             User.findById = sandbox.stub();
             req.userId = '123456789000';
+
+            req.body = {
+                name: 'Sófocles Teamildo Espírito Januário Cruz',
+                password: 'asenhasecreta',
+                email: 'softeam@softeam.com.br'
+            };
         });
 
         it('should find the user with the given id', async () => {
@@ -98,6 +104,22 @@ describe('UserController', () => {
 
             expect(res.status.calledWith(404)).to.be.true;
             expect(res.json.calledWith({ message: `Não foi encontrado usuário com o id ${req.userId}` }));
+        });
+
+        it('should update user data and return 200', async () => {
+            const user = { save: sandbox.spy() };
+            User.findById.returns({ select: () => user });
+
+            await userController.update(req, res);
+
+            const { email, name } = req.body;
+
+            expect(user.name).to.equal(name);
+            expect(user.email).to.equal(email);
+            expect(user.password).to.be.undefined;
+            expect(user.save.calledOnce).to.be.true;
+            expect(res.status.calledWith(200)).to.be.true;
+            expect(res.json.calledWith(user)).to.be.true;
         });
     });
 

@@ -40,8 +40,6 @@ class UserController {
 
             return res.status(200).json(user);
         } catch ({ message }) {
-            console.log('Deu erro');
-            console.log(message);
             return res.status(500).json({ message });
         }
     }
