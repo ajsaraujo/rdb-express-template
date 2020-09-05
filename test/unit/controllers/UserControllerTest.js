@@ -1,6 +1,5 @@
 import sinon from 'sinon';
 import UserController from '../../../src/controllers/UserController';
-import { expect } from 'chai';
 
 const { createSandbox } = sinon;
 
@@ -8,25 +7,28 @@ describe('UserController', () => {
     let sandbox;
     let req;
     let res;
-    let statusStub;
-    let jsonSpy;
     let User;
     let userController;
 
     beforeEach(() => {
         sandbox = createSandbox();
 
-        User = { create: () => {} };
+        User = {};
         userController = new UserController(User);
 
-        res = { status: () => {}, json: returnItself };
+        res = {
+            status: sandbox.stub(),
+            json: sandbox.stub()
+        };
 
-        statusStub = sandbox.stub(res, 'status').returns(res);
-        jsonSpy = sandbox.spy(res, 'json');
+        res.status.callsFake(() => res);
+        res.json.callsFake(returnItself);
     });
 
     describe('create', () => {
         beforeEach(() => {
+            User.create = sandbox.stub();
+
             req = {
                 body: {
                     name: 'Sófocles Teamildo',
@@ -43,22 +45,22 @@ describe('UserController', () => {
 
             await userController.create(req, res);
 
-            sinon.assert.calledWith(statusStub, 400);
-            sinon.assert.calledWith(jsonSpy, { message: 'O email softeam@softeam.com.br já está em uso.' });
+            sinon.assert.calledWith(res.status, 400);
+            sinon.assert.calledWith(res.json, { message: 'O email softeam@softeam.com.br já está em uso.' });
         });
 
         it('should create an user and return it', async () => {
-            const createStub = sandbox.stub(User, 'create').callsFake(returnItself);
+            User.create.callsFake(returnItself);
 
             await userController.create(req, res);
 
-            sinon.assert.calledWith(createStub, req.body);
-            sinon.assert.calledWith(statusStub, 201);
-            sinon.assert.calledWith(jsonSpy, req.body);
+            sinon.assert.calledWith(User.create, req.body);
+            sinon.assert.calledWith(res.status, 201);
+            sinon.assert.calledWith(res.json, req.body);
         });
 
         it('should not return the user password', async () => {
-            sandbox.stub(User, 'create').callsFake(returnItself);
+            User.create.callsFake(returnItself);
 
             const jsonData = await userController.create(req, res);
 
@@ -66,12 +68,12 @@ describe('UserController', () => {
         });
 
         it('should return 500 if an error is thrown', async () => {
-            sandbox.stub(User, 'create').rejects({ message: 'Erro ao criar usuário' });
+            User.create.rejects({ message: 'Erro ao criar usuário' });
 
             await userController.create(req, res);
 
-            sinon.assert.calledWith(statusStub, 500);
-            sinon.assert.calledWith(jsonSpy, { message: 'Erro ao criar usuário' });
+            sinon.assert.calledWith(res.status, 500);
+            sinon.assert.calledWith(res.json, { message: 'Erro ao criar usuário' });
         });
     });
 
