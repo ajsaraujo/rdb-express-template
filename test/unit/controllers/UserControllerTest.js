@@ -5,8 +5,6 @@ const { createSandbox } = sinon;
 
 describe('UserController', () => {
     let sandbox;
-    let User;
-    let userController;
     let req;
     let res;
     let statusStub;
@@ -15,9 +13,15 @@ describe('UserController', () => {
     beforeEach(() => {
         sandbox = createSandbox();
 
-        userController = new UserController(User);
+        req = {
+            body: {
+                name: 'Sófocles Teamildo',
+                email: 'softeam@softeam.com.br',
+                password: 'cabecadegelo'
+            },
+            emailInUse: false
+        };
 
-        req = { body: {} };
         res = { status: () => {}, json: () => {} };
 
         statusStub = sandbox.stub(res, 'status').returns(res);
@@ -29,10 +33,27 @@ describe('UserController', () => {
             req.emailInUse = true;
             req.body.email = 'carlinhosjatemconta@gmail.com';
 
+            const userController = new UserController();
             await userController.create(req, res);
 
             sinon.assert.calledWith(statusStub, 400);
             sinon.assert.calledWith(jsonSpy, { message: 'O email carlinhosjatemconta@gmail.com já está em uso.' });
         });
+
+        it('should create an user and return it', async () => {
+            const User = { create: () => {} };
+            const createStub = sandbox.stub(User, 'create').callsFake(arg => arg);
+
+            const userController = new UserController(User);
+            await userController.create(req, res);
+
+            sinon.assert.calledWith(createStub, req.body);
+            sinon.assert.calledWith(statusStub, 201);
+            sinon.assert.calledWith(jsonSpy, req.body);
+        });
+    });
+
+    afterEach(() => {
+        sandbox.restore();
     });
 });
