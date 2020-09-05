@@ -24,5 +24,8 @@
                 "no-unused-expressions": "off"
             }
         }
-    ]
+    ],
+    "globals": {
+        "returnItself": true
+    }
 }

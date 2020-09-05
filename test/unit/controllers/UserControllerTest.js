@@ -9,7 +9,6 @@ describe('UserController', () => {
     let req;
     let res;
     let statusStub;
-    let createStub;
     let jsonSpy;
     let User;
     let userController;
@@ -18,18 +17,7 @@ describe('UserController', () => {
         sandbox = createSandbox();
 
         User = { create: () => {} };
-        createStub = sandbox.stub(User, 'create').callsFake(returnItself);
-        
         userController = new UserController(User);
-        
-        req = {
-            body: {
-                name: 'Sófocles Teamildo',
-                email: 'softeam@softeam.com.br',
-                password: 'cabecadegelo'
-            },
-            emailInUse: false
-        };
 
         res = { status: () => {}, json: returnItself };
 
@@ -38,6 +26,18 @@ describe('UserController', () => {
     });
 
     describe('create', () => {
+        beforeEach(() => {
+            req = {
+                body: {
+                    name: 'Sófocles Teamildo',
+                    email: 'softeam@softeam.com.br',
+                    password: 'cabecadegelo'
+                },
+
+                emailInUse: false
+            };
+        });
+
         it('should return 400 if email is already in use', async () => {
             req.emailInUse = true;
 
@@ -48,6 +48,8 @@ describe('UserController', () => {
         });
 
         it('should create an user and return it', async () => {
+            const createStub = sandbox.stub(User, 'create').callsFake(returnItself);
+
             await userController.create(req, res);
 
             sinon.assert.calledWith(createStub, req.body);
@@ -56,9 +58,20 @@ describe('UserController', () => {
         });
 
         it('should not return the user password', async () => {
+            sandbox.stub(User, 'create').callsFake(returnItself);
+
             const jsonData = await userController.create(req, res);
 
             expect(jsonData.password).to.be.undefined;
+        });
+
+        it('should return 500 if an error is thrown', async () => {
+            sandbox.stub(User, 'create').rejects({ message: 'Erro ao criar usuário' });
+
+            await userController.create(req, res);
+
+            sinon.assert.calledWith(statusStub, 500);
+            sinon.assert.calledWith(jsonSpy, { message: 'Erro ao criar usuário' });
         });
     });
 
