@@ -16,5 +16,13 @@
         "semi": 2,
         "arrow-parens": "off",
         "comma-dangle": "off"
-    }
+    },
+    "overrides": [
+        {
+            "files": ["test/**/*Test.js"],
+            "rules": {
+                "no-unused-expressions": "off"
+            }
+        }
+    ]
 }

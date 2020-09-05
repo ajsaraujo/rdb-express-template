@@ -1,5 +1,6 @@
 import sinon from 'sinon';
 import UserController from '../../../src/controllers/UserController';
+import { expect } from 'chai';
 
 const { createSandbox } = sinon;
 
@@ -8,11 +9,19 @@ describe('UserController', () => {
     let req;
     let res;
     let statusStub;
+    let createStub;
     let jsonSpy;
+    let User;
+    let userController;
 
     beforeEach(() => {
         sandbox = createSandbox();
 
+        User = { create: () => {} };
+        createStub = sandbox.stub(User, 'create').callsFake(returnItself);
+        
+        userController = new UserController(User);
+        
         req = {
             body: {
                 name: 'Sófocles Teamildo',
@@ -22,7 +31,7 @@ describe('UserController', () => {
             emailInUse: false
         };
 
-        res = { status: () => {}, json: () => {} };
+        res = { status: () => {}, json: returnItself };
 
         statusStub = sandbox.stub(res, 'status').returns(res);
         jsonSpy = sandbox.spy(res, 'json');
@@ -31,25 +40,25 @@ describe('UserController', () => {
     describe('create', () => {
         it('should return 400 if email is already in use', async () => {
             req.emailInUse = true;
-            req.body.email = 'carlinhosjatemconta@gmail.com';
 
-            const userController = new UserController();
             await userController.create(req, res);
 
             sinon.assert.calledWith(statusStub, 400);
-            sinon.assert.calledWith(jsonSpy, { message: 'O email carlinhosjatemconta@gmail.com já está em uso.' });
+            sinon.assert.calledWith(jsonSpy, { message: 'O email softeam@softeam.com.br já está em uso.' });
         });
 
         it('should create an user and return it', async () => {
-            const User = { create: () => {} };
-            const createStub = sandbox.stub(User, 'create').callsFake(arg => arg);
-
-            const userController = new UserController(User);
             await userController.create(req, res);
 
             sinon.assert.calledWith(createStub, req.body);
             sinon.assert.calledWith(statusStub, 201);
             sinon.assert.calledWith(jsonSpy, req.body);
+        });
+
+        it('should not return the user password', async () => {
+            const jsonData = await userController.create(req, res);
+
+            expect(jsonData.password).to.be.undefined;
         });
     });
 
