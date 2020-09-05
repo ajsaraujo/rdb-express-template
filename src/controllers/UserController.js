@@ -22,12 +22,12 @@ class UserController {
     // findByIdAndUpdate não aciona 'save'. Atualizamos e chamamos save manualmente.
     async update(req, res) {
         try {
-            const { name, email, password } = req.body;
+            const { name, password, email } = req.body;
 
             const user = await this.User.findById(req.userId).select('+password');
 
             if (!user) {
-                return res.status(404).json({ message: `Não foi encontrado usuário com o ID ${req.userId}` });
+                return res.status(404).json({ message: `Não foi encontrado usuário com o id ${req.userId}` });
             }
 
             user.name = name;
@@ -40,6 +40,8 @@ class UserController {
 
             return res.status(200).json(user);
         } catch ({ message }) {
+            console.log('Deu erro');
+            console.log(message);
             return res.status(500).json({ message });
         }
     }

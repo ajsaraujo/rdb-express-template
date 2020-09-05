@@ -79,21 +79,25 @@ describe('UserController', () => {
     });
 
     describe('update()', () => {
-        let select;
-
         beforeEach(() => {
-            req.userId = '123456789000';
-
             User.findById = sandbox.stub();
-            User.findById.returns(select);
+            req.userId = '123456789000';
         });
 
         it('should find the user with the given id', async () => {
-            select = () => null;
-
+            User.findById.returns({ select: () => null });
             await userController.update(req, res);
 
             expect(User.findById.calledWith(req.userId)).to.be.true;
+        });
+
+        it('should return 404 if user was not found', async () => {
+            User.findById.returns({ select: () => null });
+
+            await userController.update(req, res);
+
+            expect(res.status.calledWith(404)).to.be.true;
+            expect(res.json.calledWith({ message: `Não foi encontrado usuário com o id ${req.userId}` }));
         });
     });
 
