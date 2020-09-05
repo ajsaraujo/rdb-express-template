@@ -1,5 +1,6 @@
 import sinon from 'sinon';
 import UserController from '../../../src/controllers/UserController';
+import { expect } from 'chai';
 
 const { createSandbox } = sinon;
 
@@ -25,7 +26,7 @@ describe('UserController', () => {
         res.json.callsFake(returnItself);
     });
 
-    describe('create', () => {
+    describe('create()', () => {
         beforeEach(() => {
             User.create = sandbox.stub();
 
@@ -45,8 +46,8 @@ describe('UserController', () => {
 
             await userController.create(req, res);
 
-            sinon.assert.calledWith(res.status, 400);
-            sinon.assert.calledWith(res.json, { message: 'O email softeam@softeam.com.br já está em uso.' });
+            expect(res.status.calledWith(400)).to.be.true;
+            expect(res.json.calledWith({ message: 'O email softeam@softeam.com.br já está em uso.' })).to.be.true;
         });
 
         it('should create an user and return it', async () => {
@@ -54,9 +55,9 @@ describe('UserController', () => {
 
             await userController.create(req, res);
 
-            sinon.assert.calledWith(User.create, req.body);
-            sinon.assert.calledWith(res.status, 201);
-            sinon.assert.calledWith(res.json, req.body);
+            expect(User.create.calledWith(req.body)).to.be.true;
+            expect(res.status.calledWith(201)).to.be.true;
+            expect(res.json.calledWith(req.body)).to.be.true;
         });
 
         it('should not return the user password', async () => {
@@ -72,8 +73,27 @@ describe('UserController', () => {
 
             await userController.create(req, res);
 
-            sinon.assert.calledWith(res.status, 500);
-            sinon.assert.calledWith(res.json, { message: 'Erro ao criar usuário' });
+            expect(res.status.calledWith(500)).to.be.true;
+            expect(res.json.calledWith({ message: 'Erro ao criar usuário' })).to.be.true;
+        });
+    });
+
+    describe('update()', () => {
+        let select;
+
+        beforeEach(() => {
+            req.userId = '123456789000';
+
+            User.findById = sandbox.stub();
+            User.findById.returns(select);
+        });
+
+        it('should find the user with the given id', async () => {
+            select = () => null;
+
+            await userController.update(req, res);
+
+            expect(User.findById.calledWith(req.userId)).to.be.true;
         });
     });
 
