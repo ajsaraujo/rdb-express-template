@@ -57,7 +57,7 @@ class UserController {
             const user = await this.User.findById(req.params.id);
 
             if (!user) {
-                return res.status(404).json({ message: `Não há usuário com o ID ${req.params.id}.` });
+                return res.status(404).json({ message: `Não há usuário com o id ${req.params.id}.` });
             }
 
             return res.status(200).json(user);

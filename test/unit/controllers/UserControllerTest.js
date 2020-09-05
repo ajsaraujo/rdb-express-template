@@ -1,4 +1,4 @@
-import sinon, { useFakeServer } from 'sinon';
+import sinon from 'sinon';
 import UserController from '../../../src/controllers/UserController';
 import { expect } from 'chai';
 
@@ -17,6 +17,8 @@ describe('UserController', () => {
         User = {};
         userController = new UserController(User);
 
+        req = { params: {} };
+
         res = {
             status: sandbox.stub(),
             json: sandbox.stub()
@@ -30,15 +32,13 @@ describe('UserController', () => {
         beforeEach(() => {
             User.create = sandbox.stub();
 
-            req = {
-                body: {
-                    name: 'Sófocles Teamildo',
-                    email: 'softeam@softeam.com.br',
-                    password: 'cabecadegelo'
-                },
-
-                emailInUse: false
+            req.body = {
+                name: 'Sófocles Teamildo',
+                email: 'softeam@softeam.com.br',
+                password: 'cabecadegelo'
             };
+
+            req.emailInUse = false;
         });
 
         it('should return 400 if email is already in use', async () => {
@@ -167,6 +167,46 @@ describe('UserController', () => {
 
             expect(res.status.calledWith(500)).to.be.true;
             expect(res.json.calledWith({ message: 'A busca falhou' })).to.be.true;
+        });
+    });
+
+    describe('getById()', async () => {
+        beforeEach(() => {
+            User.findById = sandbox.stub();
+            req.params.id = '123456789000';
+        });
+
+        it('should return 404 if user is not found', async () => {
+            User.findById.resolves(null);
+
+            await userController.getById(req, res);
+
+            expect(res.status.calledWith(404)).to.be.true;
+            expect(res.json.calledWith({ message: `Não há usuário com o id ${req.params.id}.` }));
+        });
+
+        it('should return 200 and user', async () => {
+            const user = {
+                name: 'Zé da Onça',
+                email: 'zedaonca@softeam.com.br',
+                password: 'graaaaawrlllllnhaaauw'
+            };
+
+            User.findById.resolves(user);
+
+            await userController.getById(req, res);
+
+            expect(res.status.calledWith(200)).to.be.true;
+            expect(res.json.calledWith(user)).to.be.true;
+        });
+
+        it('should return 500 if an error is thrown', async () => {
+            User.findById.rejects({ message: 'Usuário não encontrado' });
+
+            await userController.getById(req, res);
+
+            expect(res.status.calledWith(500)).to.be.true;
+            expect(res.json.calledWith({ message: 'Usuário não encontrado' })).to.be.true;
         });
     });
 
