@@ -1,6 +1,5 @@
 import sinon from 'sinon';
 import UserController from '../../../src/controllers/UserController';
-import { expect } from 'chai';
 
 const { createSandbox } = sinon;
 
@@ -50,7 +49,7 @@ describe('UserController', () => {
             expect(res.json.calledWith({ message: 'O email softeam@softeam.com.br já está em uso.' })).to.be.true;
         });
 
-        it('should create an user and return it', async () => {
+        it('should return 200 and create user', async () => {
             User.create.callsFake(returnItself);
 
             await userController.create(req, res);
@@ -90,13 +89,6 @@ describe('UserController', () => {
             };
         });
 
-        it('should find the user with the given id', async () => {
-            User.findById.returns({ select: () => null });
-            await userController.update(req, res);
-
-            expect(User.findById.calledWith(req.userId)).to.be.true;
-        });
-
         it('should return 404 if user was not found', async () => {
             User.findById.returns({ select: () => null });
 
@@ -106,7 +98,7 @@ describe('UserController', () => {
             expect(res.json.calledWith({ message: `Não foi encontrado usuário com o id ${req.userId}` }));
         });
 
-        it('should update user data and return 200', async () => {
+        it('should return 200 and update user data', async () => {
             const user = { save: sandbox.spy() };
             User.findById.returns({ select: () => user });
 
@@ -114,6 +106,7 @@ describe('UserController', () => {
 
             const { email, name } = req.body;
 
+            expect(User.findById.calledWith(req.userId));
             expect(user.name).to.equal(name);
             expect(user.email).to.equal(email);
             expect(user.password).to.be.undefined;
@@ -225,7 +218,7 @@ describe('UserController', () => {
             expect(res.json.calledWith({ message: 'Usuário não encontrado.' })).to.be.true;
         });
 
-        it('should delete the user with the given id and return 200', async () => {
+        it('should return 200 and delete the user with the given id', async () => {
             const user = {
                 name: 'Mor Tod Asilva',
                 email: 'mortodasilva@softeam.com.br',
