@@ -23,7 +23,6 @@ class UserController {
     async update(req, res) {
         try {
             const { name, password, email } = req.body;
-
             const user = await this.User.findById(req.userId).select('+password');
 
             if (!user) {

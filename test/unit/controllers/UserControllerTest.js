@@ -1,4 +1,4 @@
-import sinon from 'sinon';
+import sinon, { useFakeServer } from 'sinon';
 import UserController from '../../../src/controllers/UserController';
 import { expect } from 'chai';
 
@@ -120,6 +120,53 @@ describe('UserController', () => {
             expect(user.save.calledOnce).to.be.true;
             expect(res.status.calledWith(200)).to.be.true;
             expect(res.json.calledWith(user)).to.be.true;
+        });
+
+        it('should return 500 if an error is thrown', async () => {
+            User.findById.returns({
+                select: () => {
+                    throw new Error('Erro ao buscar usuário');
+                }
+            });
+
+            await userController.update(req, res);
+
+            expect(res.status.calledWith(500)).to.be.true;
+            expect(res.json.calledWith({ message: 'Erro ao buscar usuário' })).to.be.true;
+        });
+    });
+
+    describe('getAll()', () => {
+        beforeEach(() => {
+            User.find = sandbox.stub();
+        });
+
+        it('should return 200 and a list of users', async () => {
+            const users = [{
+                name: 'Jonas Lima',
+                email: 'jonaslima@softeam.com.br',
+                password: 'designehminhapaixao'
+            }, {
+                name: 'Yves Bastos',
+                email: 'yvesbastos@softeam.com.br',
+                password: 'acabecadopovo'
+            }];
+
+            User.find.resolves(users);
+
+            await userController.getAll(req, res);
+
+            expect(res.status.calledWith(200)).to.be.true;
+            expect(res.json.calledWith(users)).to.be.true;
+        });
+
+        it('should return 500 if an error is thrown', async () => {
+            User.find.rejects({ message: 'A busca falhou' });
+
+            await userController.getAll(req, res);
+
+            expect(res.status.calledWith(500)).to.be.true;
+            expect(res.json.calledWith({ message: 'A busca falhou' })).to.be.true;
         });
     });
 
