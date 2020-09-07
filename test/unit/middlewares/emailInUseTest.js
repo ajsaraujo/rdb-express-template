@@ -52,6 +52,15 @@ describe('emailInUse', () => {
         expect(req.emailInUse).to.be.true;
     });
 
+    it('should return 500 if an error is thrown', async () => {
+        findStub.rejects({ message: 'Deu certo não' });
+
+        await emailInUse(req, res, next);
+
+        expect(res.status.calledWith(500)).to.be.true;
+        expect(res.json.calledWith({ message: 'Deu certo não' })).to.be.true;
+    });
+
     afterEach(() => {
         sandbox.restore();
     });
