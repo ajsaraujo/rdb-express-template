@@ -20,14 +20,16 @@ module.exports = {
     },
     overrides: [
         {
-            files: ['test/**/*Test.js'],
+            files: ['test/**/*Test.js', 'test/**/TestUtils.js'],
             rules: {
                 'no-unused-expressions': 'off'
+            },
+            globals: {
+                returnItself: true,
+                expect: true,
+                TestUtils: true,
+                createSandbox: true
             }
         }
     ],
-    globals: {
-        returnItself: true,
-        expect: true
-    }
 };

@@ -1,8 +1,4 @@
-import sinon from 'sinon';
 import UserController from '../../../src/controllers/UserController';
-import TestUtils from '../TestUtils';
-
-const { createSandbox } = sinon;
 
 describe('UserController', () => {
     let sandbox;

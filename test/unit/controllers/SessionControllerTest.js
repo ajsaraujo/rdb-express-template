@@ -1,8 +1,5 @@
-import { createSandbox } from 'sinon';
-import TestUtils from '../TestUtils';
 import PasswordUtils from '../../../src/utils/PasswordUtils';
 import SessionController from '../../../src/controllers/SessionController';
-import { expect } from 'chai';
 
 describe('SessionController', () => {
     describe('auth', () => {
