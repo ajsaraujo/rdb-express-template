@@ -1,6 +1,5 @@
 import emailInUse from '../../../src/middlewares/emailInUse';
 import { User } from '../../../src/models/User';
-import { expect } from 'chai';
 
 describe('emailInUse', () => {
     let req;
