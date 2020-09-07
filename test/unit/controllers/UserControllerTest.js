@@ -1,5 +1,6 @@
 import sinon from 'sinon';
 import UserController from '../../../src/controllers/UserController';
+import mockReqRes from '../mockReqRes';
 
 const { createSandbox } = sinon;
 
@@ -16,15 +17,9 @@ describe('UserController', () => {
         User = {};
         userController = new UserController(User);
 
-        req = { params: {} };
-
-        res = {
-            status: sandbox.stub(),
-            json: sandbox.stub()
-        };
-
-        res.status.callsFake(() => res);
-        res.json.callsFake(returnItself);
+        const mocks = mockReqRes(sandbox);
+        req = mocks.req;
+        res = mocks.res;
     });
 
     describe('create()', () => {
