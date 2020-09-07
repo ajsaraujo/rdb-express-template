@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import UserController from '../../../src/controllers/UserController';
-import mockReqRes from '../mockReqRes';
+import TestUtils from '../TestUtils';
 
 const { createSandbox } = sinon;
 
@@ -17,7 +17,7 @@ describe('UserController', () => {
         User = {};
         userController = new UserController(User);
 
-        const mocks = mockReqRes(sandbox);
+        const mocks = TestUtils.mockReqRes(sandbox);
         req = mocks.req;
         res = mocks.res;
     });
