@@ -61,6 +61,16 @@ describe('SessionController', () => {
             expect(res.json.calledWith({ message: 'Email ou senha incorretos.' })).to.be.true;
         });
 
+        it('should return 400 if passwords do not match', async () => {
+            sandbox.stub(User, 'findOne').returns({ select: () => mockUser });
+            sandbox.stub(PasswordUtils, 'match').resolves(false);
+
+            await sessionController.auth(req, res);
+
+            expect(res.status.calledWith(400)).to.be.true;
+            expect(res.json.calledWith({ message: 'Email ou senha incorretos.' })).to.be.true;
+        });
+
         afterEach(() => {
             sandbox.restore();
         });
