@@ -1,6 +1,5 @@
 import { Types } from 'mongoose';
 import verifyId from '../../../src/middlewares/verifyId';
-import { expect } from 'chai';
 
 describe('verifyId', () => {
     let req;
