@@ -2,11 +2,13 @@ import rewire from 'rewire';
 
 function mockReqRes(sandbox) {
     const req = { params: {} };
+
     const res = {
         status: sandbox.stub().callsFake(() => res),
         json: sandbox.stub().callsFake(returnItself)
     };
-    const next = () => {};
+
+    const next = sandbox.stub();
 
     return { req, res, next };
 }

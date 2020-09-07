@@ -1,5 +1,6 @@
 import emailInUse from '../../../src/middlewares/emailInUse';
 import { User } from '../../../src/models/User';
+import { expect } from 'chai';
 
 describe('emailInUse', () => {
     let req;
@@ -32,6 +33,7 @@ describe('emailInUse', () => {
 
         await emailInUse(req, res, next);
 
+        expect(next.called).to.be.true;
         expect(req.emailInUse).to.be.false;
     });
 
@@ -46,6 +48,7 @@ describe('emailInUse', () => {
 
         await emailInUse(req, res, next);
 
+        expect(next.called).to.be.true;
         expect(req.emailInUse).to.be.true;
     });
 
