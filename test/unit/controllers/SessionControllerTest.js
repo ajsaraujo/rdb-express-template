@@ -51,6 +51,16 @@ describe('SessionController', () => {
             expect(PasswordUtils.match.calledWith(req.body.password, mockUser.password));
         });
 
+        it('should return 400 if user is not found', async () => {
+            sandbox.stub(User, 'findOne').returns({ select: () => null });
+            sandbox.stub(PasswordUtils, 'match').resolves(true);
+
+            await sessionController.auth(req, res);
+
+            expect(res.status.calledWith(400)).to.be.true;
+            expect(res.json.calledWith({ message: 'Email ou senha incorretos.' })).to.be.true;
+        });
+
         afterEach(() => {
             sandbox.restore();
         });
