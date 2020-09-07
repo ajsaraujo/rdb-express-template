@@ -32,6 +32,23 @@ describe('validate', () => {
         expect(schema.validateAsync.calledWith(req.body)).to.be.true;
     });
 
+    it('should call next if validation succeeds', async () => {
+        schema.validateAsync.resolves();
+
+        await validate(schema)(req, res, next);
+
+        expect(next.calledOnce).to.be.true;
+    });
+
+    it('should return 400 if validation fails', async () => {
+        schema.validateAsync.rejects({ message: 'Dados horríveis' });
+
+        await validate(schema)(req, res, next);
+
+        expect(res.status.calledWith(400)).to.be.true;
+        expect(res.json.calledWith({ message: 'Dados horríveis' })).to.be.true;
+    });
+
     afterEach(() => {
         sandbox.restore();
     });
