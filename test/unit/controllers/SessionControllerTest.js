@@ -12,7 +12,7 @@ describe('SessionController', () => {
         let User;
         let sessionController;
 
-        const mockUser = { 
+        const mockUser = {
             email: 'juliao@softeam.com.br',
             name: 'Julião da Motoca',
             password: '2x45V6yxhsKslsa123çCad'
@@ -69,6 +69,20 @@ describe('SessionController', () => {
 
             expect(res.status.calledWith(400)).to.be.true;
             expect(res.json.calledWith({ message: 'Email ou senha incorretos.' })).to.be.true;
+        });
+
+        it('should return 200 with the user and token', async () => {
+            sandbox.stub(User, 'findOne').returns({ select: () => mockUser });
+            sandbox.stub(PasswordUtils, 'match').resolves(true);
+            sandbox.stub(sessionController, 'generateToken').resolves('tokenemdoido');
+
+            const userWithoutPassword = mockUser;
+            delete userWithoutPassword.password;
+
+            const json = await sessionController.auth(req, res);
+
+            expect(res.status.calledWith(200)).to.be.true;
+            expect(json).to.deep.equal({ user: userWithoutPassword, token: 'tokenemdoido' });
         });
 
         afterEach(() => {

@@ -1,14 +1,16 @@
 import jwt from 'jsonwebtoken';
 import PasswordUtils from '../utils/PasswordUtils';
 
-async function generateToken(id) {
-    return jwt.sign({ id }, process.env.SECRET, { expiresIn: '1d' });
-}
-
 class SessionController {
     constructor(User) {
         this.User = User;
     }
+
+    /* eslint-disable */
+    async generateToken(id) {
+        return jwt.sign({ id }, process.env.SECRET, { expiresIn: '1d' });
+    }
+    /* eslint-enable */
 
     async auth(req, res) {
         const { email } = req.body;
@@ -22,7 +24,7 @@ class SessionController {
         }
 
         user.password = undefined;
-        const token = await generateToken(user.id);
+        const token = await this.generateToken(user.id);
 
         return res.status(200).json({ user, token });
     }
