@@ -1,5 +1,4 @@
 import LogController from '../../../src/controllers/LogController';
-import { expect } from 'chai';
 
 describe('LogController', () => {
     let Log;

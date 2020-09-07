@@ -6,8 +6,9 @@ function mockReqRes(sandbox) {
         status: sandbox.stub().callsFake(() => res),
         json: sandbox.stub().callsFake(returnItself)
     };
+    const next = () => {};
 
-    return { req, res };
+    return { req, res, next };
 }
 
 function getPrivateMethod(modulePath, methodName) {
