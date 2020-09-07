@@ -2,6 +2,7 @@ import { createSandbox } from 'sinon';
 import TestUtils from '../TestUtils';
 import PasswordUtils from '../../../src/utils/PasswordUtils';
 import SessionController from '../../../src/controllers/SessionController';
+import { expect } from 'chai';
 
 describe('SessionController', () => {
     describe('auth', () => {
@@ -10,6 +11,12 @@ describe('SessionController', () => {
         let sandbox;
         let User;
         let sessionController;
+
+        const mockUser = { 
+            email: 'juliao@softeam.com.br',
+            name: 'Julião da Motoca',
+            password: '2x45V6yxhsKslsa123çCad'
+        };
 
         beforeEach(() => {
             sandbox = createSandbox();
@@ -29,9 +36,19 @@ describe('SessionController', () => {
 
         it('should find the user by email', async () => {
             sandbox.stub(User, 'findOne').returns({ select: () => null });
+
             await sessionController.auth(req, res);
 
             expect(User.findOne.calledWith({ email: req.body.email })).to.be.true;
+        });
+
+        it('should match the encrypted password against the provided password', async () => {
+            sandbox.stub(PasswordUtils, 'match');
+            sandbox.stub(User, 'findOne').returns({ select: () => mockUser });
+
+            await sessionController.auth(req, res);
+
+            expect(PasswordUtils.match.calledWith(req.body.password, mockUser.password));
         });
 
         afterEach(() => {
