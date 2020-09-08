@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import verifyToken from '../../../src/middlewares/verifyToken';
+import { expect } from 'chai';
 
 describe('verifyToken', () => {
     let sandbox;
@@ -43,31 +44,42 @@ describe('verifyToken', () => {
             next = mocks.next;
         });
 
-        it('should return 401 if no token is provided', async () => {
-            await verifyToken(req, res, next);
+        it('should return 401 if no token is provided', () => {
+            verifyToken(req, res, next);
 
             expect(res.status.calledWith(401)).to.be.true;
             expect(res.json.calledWith({ message: 'Autenticação necessária.' }));
         });
 
-        it('should return 401 if token is malformed', async () => {
+        it('should return 401 if token is malformed', () => {
             req.headers.authorization = 'Beaer 123456789a32';
 
-            await verifyToken(req, res, next);
+            verifyToken(req, res, next);
 
             expect(res.status.calledWith(401)).to.be.true;
             expect(res.json.calledWith({ message: 'Token inválido.' })).to.be.true;
         });
 
-        it('should return next and inject user id into the request', async () => {
+        it('should return next and inject user id into the request', () => {
             req.headers.authorization = 'Bearer 1234577920fsdaf';
 
             sandbox.stub(jwt, 'verify').returns({ id: 'bj435çsfkj' });
 
-            await verifyToken(req, res, next);
+            verifyToken(req, res, next);
 
             expect(req.userId).to.equal('bj435çsfkj');
             expect(next.calledOnce).to.be.true;
+        });
+
+        it('should return 401 if an error is thrown', () => {
+            req.headers.authorization = 'Bearer 143ijtdgr395';
+
+            sandbox.stub(jwt, 'verify').throws(new Error('Token inválido'));
+
+            verifyToken(req, res, next);
+
+            expect(res.status.calledWith(401)).to.be.true;
+            expect(res.json.calledWith({ message: 'Token inválido.' })).to.be.true;
         });
     });
 
