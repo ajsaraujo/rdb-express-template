@@ -17,7 +17,7 @@ async function verifyToken(req, res, next) {
     const header = req.headers.authorization;
 
     if (!header) {
-        return res.status(401).json({ message: 'Nenhum token foi providenciado.' });
+        return res.status(401).json({ message: 'Autenticação necessária.' });
     }
 
     const [type, token] = header.split(' ');

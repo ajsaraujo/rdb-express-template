@@ -1,7 +1,8 @@
+/* eslint-disable no-underscore-dangle */
 import rewire from 'rewire';
 
 function mockReqRes(sandbox) {
-    const req = { params: {} };
+    const req = { params: {}, headers: {} };
 
     const res = {
         status: sandbox.stub().callsFake(() => res),
@@ -16,9 +17,17 @@ function mockReqRes(sandbox) {
 function getPrivateMethod(modulePath, methodName) {
     const module = rewire(modulePath);
 
-    /* eslint-disable */
     return module.__get__(methodName);
-    /* eslint-enable */
 }
 
-export default { mockReqRes, getPrivateMethod };
+function stubPrivateMethod(sandbox, modulePath, methodName) {
+    const module = rewire(modulePath);
+
+    const stub = sandbox.stub();
+
+    module.__set__(methodName, stub);
+
+    return stub;
+}
+
+export default { mockReqRes, getPrivateMethod, stubPrivateMethod };
