@@ -1,5 +1,3 @@
-import app from '../../src/app';
-
 describe('app', () => {
     let sandbox;
 
@@ -13,11 +11,6 @@ describe('app', () => {
 
         beforeEach(() => {
             appMock = { use: sandbox.stub() };
-
-            middlewares = [
-                sandbox.stub().returns('Finja que eu sou um middleware!'),
-                sandbox.stub().returns('E eu sou outro :p')
-            ];
         });
 
         const injectMiddlewares = TestUtils
@@ -27,11 +20,37 @@ describe('app', () => {
             );
 
         it('should inject middlewares in the app', () => {
+            middlewares = [
+                sandbox.stub().returns('Finja que eu sou um middleware!'),
+                sandbox.stub().returns('E eu sou outro :p'),
+            ];
+
             injectMiddlewares(appMock, middlewares);
 
             middlewares.forEach(middleware => {
                 expect(middleware.calledOnce).to.be.true;
                 expect(appMock.use.calledWith(middleware())).to.be.true;
+            });
+        });
+
+        it('should call the middleware with args if necessary', () => {
+            middlewares = [
+                sandbox.stub().returns('Middleware sem argumentos'),
+                [sandbox.stub().returns('Middleware com argumentos'), { fake: true }]
+            ];
+
+            injectMiddlewares(appMock, middlewares);
+
+            middlewares.forEach(middleware => {
+                if (typeof middleware === 'function') {
+                    expect(middleware.calledOnce).to.be.true;
+                    expect(appMock.use.calledWith(middleware())).to.be.true;
+                } else {
+                    const [createMiddleware, args] = middleware;
+
+                    expect(createMiddleware.calledOnce).to.be.true;
+                    expect(appMock.use.calledWith(createMiddleware(args))).to.be.true;
+                }
             });
         });
     });

@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
 import verifyToken from '../../../src/middlewares/verifyToken';
-import { expect } from 'chai';
 
 describe('verifyToken', () => {
     let sandbox;
