@@ -6,13 +6,7 @@ import database from './database';
 import createRouter from './router';
 import logErrors from './middlewares/logErrors';
 
-function injectMiddlewares(app) {
-    const middlewares = [
-        helmet, cors, compression, express.json,
-        [express.urlencoded, { extended: true }],
-        logErrors
-    ];
-
+function injectMiddlewares(app, middlewares) {
     middlewares.forEach(middleware => {
         if (typeof middleware === 'function') {
             app.use(middleware());
@@ -26,7 +20,13 @@ function injectMiddlewares(app) {
 async function createApp() {
     const app = express();
 
-    injectMiddlewares(app);
+    const middlewares = [
+        helmet, cors, compression, express.json,
+        [express.urlencoded, { extended: true }],
+        logErrors
+    ];
+
+    injectMiddlewares(app, middlewares);
 
     const router = await createRouter();
     app.use('/api', router);
