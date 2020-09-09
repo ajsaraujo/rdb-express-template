@@ -3,7 +3,7 @@ import cors from 'cors';
 import compression from 'compression';
 import helmet from 'helmet';
 import database from './database';
-import router from './router';
+import createRouter from './router';
 import logErrors from './middlewares/logErrors';
 
 function injectMiddlewares(app) {
@@ -28,6 +28,7 @@ async function createApp() {
 
     injectMiddlewares(app);
 
+    const router = await createRouter();
     app.use('/api', router);
 
     app.database = database;
