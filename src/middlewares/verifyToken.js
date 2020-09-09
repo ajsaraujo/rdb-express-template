@@ -17,7 +17,7 @@ async function verifyToken(req, res, next) {
     const header = req.headers.authorization;
 
     if (!header) {
-        return res.status(401).json({ message: 'Nenhum token foi providenciado.' });
+        return res.status(401).json({ message: 'Autenticação necessária.' });
     }
 
     const [type, token] = header.split(' ');
@@ -27,7 +27,8 @@ async function verifyToken(req, res, next) {
     }
 
     try {
-        const decoded = await promisify(jwt.verify)(token, process.env.SECRET);
+        const decoded = jwt.verify(token, process.env.SECRET);
+
         req.userId = decoded.id;
 
         return next();

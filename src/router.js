@@ -2,9 +2,9 @@ import path from 'path';
 import { Router } from 'express';
 import DirectoryUtils from './utils/DirectoryUtils';
 
-const router = Router();
+async function createRouter() {
+    const router = Router();
 
-(async () => {
     const routesDirectory = path.join(__dirname, '/routes');
     const routes = await DirectoryUtils.getFilesInDirectory(routesDirectory, 'Route.js');
 
@@ -15,6 +15,6 @@ const router = Router();
     router.get('/', (req, res) => res.status(200).json({ message: 'Seja bem vindo!' }));
 
     return router;
-})();
+}
 
-export default router;
+export default createRouter;

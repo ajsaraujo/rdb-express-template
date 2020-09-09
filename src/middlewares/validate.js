@@ -4,7 +4,7 @@ function validate(schema) {
             await schema.validateAsync(req.body);
             return next();
         } catch ({ message }) {
-            return res.status(404).json({ message });
+            return res.status(400).json({ message });
         }
     };
 }
