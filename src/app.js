@@ -6,15 +6,27 @@ import database from './database';
 import router from './router';
 import logErrors from './middlewares/logErrors';
 
+function injectMiddlewares(app) {
+    const middlewares = [
+        helmet, cors, compression, express.json,
+        [express.urlencoded, { extended: true }],
+        logErrors
+    ];
+
+    middlewares.forEach(middleware => {
+        if (typeof middleware === 'function') {
+            app.use(middleware());
+        } else {
+            const [createMiddleware, args] = middleware;
+            app.use(createMiddleware(args));
+        }
+    });
+}
+
 async function createApp() {
     const app = express();
 
-    app.use(helmet());
-    app.use(cors());
-    app.use(compression());
-    app.use(express.json());
-    app.use(express.urlencoded({ extended: true }));
-    app.use(logErrors());
+    injectMiddlewares(app);
 
     app.use('/api', router);
 
