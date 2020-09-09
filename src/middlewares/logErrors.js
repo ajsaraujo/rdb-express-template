@@ -5,7 +5,7 @@ import LogController from '../controllers/LogController';
 
 function createStream() {
     const stream = new PassThrough();
-    
+
     const lineStream = carry(stream);
     lineStream.on('line', LogController.create);
 

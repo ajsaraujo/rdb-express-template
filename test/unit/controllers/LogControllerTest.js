@@ -1,6 +1,6 @@
 import LogController from '../../../src/controllers/LogController';
 
-describe('LogController', () => {
+describe.skip('LogController', () => {
     let Log;
     let logController;
     let sandbox;
