@@ -1,4 +1,0 @@
---require @babel/register
---require test/unit/setup.js
---reporter spec
---slow 5000
