@@ -51,7 +51,7 @@ Para executar um script, rode `npm run <nome_do_script>` na pasta raiz do projet
 
 
 ### Arquivos de inicialização
-- `database.js` cria uma interface de comunicação com o banco de dados, definindo métodos para estabelecer e fechar a conexão.
+- `database.js` cria uma interface de comunicação com o banco de dados, definindo métodos para abrir e fechar a conexão.
 - `router.js` cria um Router contendo todos os endpoints  expostos pelos arquivos em `routes/`.
 - `app.js` cria o servidor, injetando nele os middlewares, endpoints, e um objeto de banco de dados.
 - `index.js` é o ponto de entrada da aplicação. Ele chama as rotinas de inicialização, pondo o servidor de pé e iniciando a conexão com o banco de dados. Ele também é responsável por garantir que a aplicação [feche graciosamente](https://expressjs.com/en/advanced/healthcheck-graceful-shutdown.html).
@@ -60,19 +60,19 @@ Para executar um script, rode `npm run <nome_do_script>` na pasta raiz do projet
 
 Suponha que seu gerente acabou de lhe alocar em um novo projeto, e para sua primeira sprint lhe foi assinalada a tarefa de adicionar um módulo de produtos à aplicação.
 
-O primeiro passo é criar o _model_, então, dentro de `models/`, crie um arquivo `Product.js`:
+O primeiro passo é criar o model, então, dentro de `models/`, crie um arquivo `Product.js`:
 
 ```js
 import { Schema, model } from 'mongoose';
 
 const ProductSchema = new Schema({
     price: {
-	    type: Number,
-		required: true
+        type: Number,
+        required: true
 	},
-	name: {
-		type: String,
-		required: true
+    name: {
+	    type: String,
+	    required: true
 	}
 });
 
@@ -135,7 +135,7 @@ router.post('/', validate(productRules), productController.create);
 export default { name: 'product', router };
 ```
 
-Criamos um _router_ que irá servir o endpoint `/product`. Instanciamos um novo `ProductController` injetando nele o model `Product` definido em `models/`. Então, associamos cada verbo HTTP a um método do controller, utilizando o middleware de validação quando necessário. Por fim, exportamos um objeto com o nome do endpoint que será exposto, e o router. Pronto! Não é preciso fazer mais nada, o _createRouter_  já se responsabilizará por incluir esses endpoints em `api/product`. 
+Criamos um _router_ que irá servir o endpoint `/product`. Instanciamos um novo `ProductController` injetando nele o model `Product` definido em `models/`. Então, associamos cada verbo HTTP a um método do controller, utilizando o middleware de validação quando necessário. Por fim, exportamos um objeto com o nome do endpoint que será exposto, e o router. Pronto! Não é preciso fazer mais nada, o `createRouter`  já se responsabilizará por incluir esses endpoints em `api/product`. 
 
 ## Dependências
 
