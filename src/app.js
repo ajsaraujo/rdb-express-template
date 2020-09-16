@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import compression from 'compression';
 import helmet from 'helmet';
-import database from './database';
+import Database from './database';
 import createRouter from './router';
 
 function injectMiddlewares(app, middlewares) {
@@ -29,7 +29,7 @@ async function createApp() {
     const router = await createRouter();
     app.use('/api', router);
 
-    app.database = database;
+    app.database = new Database();
 
     return app;
 }

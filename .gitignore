@@ -11,3 +11,5 @@ build/*
 
 # Variáveis de ambiente
 .env
+
+*.sqlite
