@@ -11,11 +11,12 @@ class User extends Model {
             },
             name: {
                 type: DataTypes.STRING,
-                allowNull: false
+                allowNull: false,
             },
             email: {
                 type: DataTypes.STRING,
-                allowNull: false
+                allowNull: false,
+                unique: true
             },
             password: {
                 type: DataTypes.STRING,
