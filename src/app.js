@@ -4,6 +4,7 @@ import compression from 'compression';
 import helmet from 'helmet';
 import Database from './database';
 import createRouter from './router';
+import logErrors from './middlewares/logErrors';
 
 function injectMiddlewares(app, middlewares) {
     middlewares.forEach(middleware => {
@@ -22,6 +23,7 @@ async function createApp() {
     const middlewares = [
         helmet, cors, compression, express.json,
         [express.urlencoded, { extended: true }],
+        logErrors
     ];
 
     injectMiddlewares(app, middlewares);
