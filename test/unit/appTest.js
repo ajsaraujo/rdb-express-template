@@ -1,4 +1,4 @@
-describe('app', () => {
+describe.skip('app', () => {
     let sandbox;
 
     beforeEach(() => {

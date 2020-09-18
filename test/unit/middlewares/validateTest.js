@@ -1,7 +1,6 @@
 import validate from '../../../src/middlewares/validate';
-import { expect } from 'chai';
 
-describe('validate', () => {
+describe.skip('validate', () => {
     let sandbox;
     let req;
     let res;

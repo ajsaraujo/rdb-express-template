@@ -1,7 +1,7 @@
 import PasswordUtils from '../../../src/utils/PasswordUtils';
 import SessionController from '../../../src/controllers/SessionController';
 
-describe('SessionController', () => {
+describe.skip('SessionController', () => {
     describe('auth', () => {
         let req;
         let res;
