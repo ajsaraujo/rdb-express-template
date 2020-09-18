@@ -18,6 +18,15 @@ class UserController {
             return res.status(500).json({ message });
         }
     }
+
+    async getAll(req, res) {
+        try {
+            const users = await this.User.findAll();
+            return res.status(200).json(users);
+        } catch ({ message }) {
+            return res.status(500).json({ message });
+        }
+    }
 }
 
 export default UserController;

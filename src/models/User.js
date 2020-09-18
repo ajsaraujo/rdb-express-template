@@ -25,29 +25,33 @@ class User extends Model {
                 allowNull: false
             }
         }, { sequelize });
+
+        User.injectValidationRules();
+    }
+
+    static injectValidationRules() {
+        async function encryptPassword(user) {
+            // eslint-disable-next-line no-param-reassign
+            user.password = await PasswordUtils.encrypt(user.password);
+        }
+
+        User.beforeCreate(encryptPassword);
+        User.beforeUpdate(encryptPassword);
+
+        const emailRules = Joi.string().email().required();
+        const passwordRules = Joi.string().min(8).max(40).required();
+
+        User.validationRules = Joi.object({
+            name: Joi.string().pattern(new RegExp('^[[A-Za-zÁÉÍÓÚáéíóúãõÃÕâêôÂÊÔ ]+$')).required(),
+            email: emailRules,
+            password: passwordRules
+        });
+
+        User.authRules = Joi.object({
+            email: emailRules,
+            password: passwordRules
+        });
     }
 }
-
-async function encryptPassword(user) {
-    // eslint-disable-next-line no-param-reassign
-    user.password = await PasswordUtils.encrypt(user.password);
-}
-
-User.beforeCreate(encryptPassword);
-User.beforeUpdate(encryptPassword);
-
-const emailRules = Joi.string().email().required();
-const passwordRules = Joi.string().min(8).max(40).required();
-
-User.validationRules = Joi.object({
-    name: Joi.string().pattern(new RegExp('^[[A-Za-zÁÉÍÓÚáéíóúãõÃÕâêôÂÊÔ ]+$')).required(),
-    email: emailRules,
-    password: passwordRules
-});
-
-User.authRules = Joi.object({
-    email: emailRules,
-    password: passwordRules
-});
 
 export default User;
