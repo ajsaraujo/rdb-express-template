@@ -16,7 +16,8 @@ module.exports = {
         semi: 2,
         'arrow-parens': 'off',
         'comma-dangle': 'off',
-        'linebreak-style': 'off'
+        'linebreak-style': 'off',
+        'function-paren-newline': 'off',
     },
     overrides: [
         {
