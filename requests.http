@@ -15,7 +15,7 @@ content-type: application/json
 GET http://localhost:8080/api/user HTTP/1.1
 
 ### Obter um usuário pelo ID
-GET http://localhost:8080/api/user/5f1234205dc3d1e2c613618 HTTP/1.1
+GET http://localhost:8080/api/user/a9199d5a-dbf7-4c23-85b7-00164479a2b HTTP/1.1
 
 ### Atualizar dados do usuário
 PUT http://localhost:8080/api/user/ HTTP/1.1

@@ -27,6 +27,20 @@ class UserController {
             return res.status(500).json({ message });
         }
     }
+
+    async getById(req, res) {
+        try {
+            const user = await this.User.findByPk(req.params.id);
+
+            if (user === null) {
+                return res.status(404).json({ message: `Não há usuário com o id ${req.params.id}.` });
+            }
+
+            return res.status(200).json(user);
+        } catch ({ message }) {
+            return res.status(500).json({ message: `Erro ao buscar usuário: ${message}` });
+        }
+    }
 }
 
 export default UserController;
