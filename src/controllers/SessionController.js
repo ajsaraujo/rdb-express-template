@@ -1,13 +1,13 @@
 import jwt from 'jsonwebtoken';
 import PasswordUtils from '../utils/PasswordUtils';
 
-async function generateToken(id) {
-    return jwt.sign({ id }, process.env.SECRET, { expiresIn: '1d' });
-}
-
 class SessionController {
     constructor(User) {
         this.User = User;
+    }
+
+    static async generateToken(id) {
+        return jwt.sign({ id }, process.env.SECRET, { expiresIn: '1d' });
     }
 
     async auth(req, res) {
@@ -21,7 +21,7 @@ class SessionController {
         }
 
         user.password = undefined;
-        const token = await generateToken(user.id);
+        const token = await SessionController.generateToken(user.id);
 
         return res.status(200).json({ user, token });
     }
