@@ -14,7 +14,7 @@ class SessionController {
         const { email, password } = req.body;
 
         const user = await this.User.findOne({ where: { email } });
-        const passwordsMatch = await PasswordUtils.match(password, user.password);
+        const passwordsMatch = await PasswordUtils.match(password, user?.password);
 
         if (user === null || !passwordsMatch) {
             return res.status(400).json({ message: 'Email e/ou senha incorretos.' });

@@ -7,6 +7,6 @@ import validate from '../middlewares/validate';
 const router = Router();
 const userController = new UserController(User);
 
-router.post('/', validate(User.validationRules), emailInUse, (req, res) => userController.create(req, res));
+router.post('/', validate(User.rules), emailInUse, (req, res) => userController.create(req, res));
 
 export default { router, name: '/register' };

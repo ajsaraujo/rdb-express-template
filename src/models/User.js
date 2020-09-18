@@ -36,22 +36,19 @@ class User extends Model {
         }
 
         User.beforeCreate(encryptPassword);
-        User.beforeUpdate(encryptPassword);
+        User.beforeSave(encryptPassword);
     }
 }
 
-const emailRules = Joi.string().email().required();
-const passwordRules = Joi.string().min(8).max(40).required();
+const id = Joi.string().required();
+const name = Joi.string().pattern(new RegExp('^[[A-Za-zÁÉÍÓÚáéíóúãõÃÕâêôÂÊÔ ]+$')).required();
+const email = Joi.string().email().required();
+const password = Joi.string().min(8).max(40).required();
 
-User.validationRules = Joi.object({
-    name: Joi.string().pattern(new RegExp('^[[A-Za-zÁÉÍÓÚáéíóúãõÃÕâêôÂÊÔ ]+$')).required(),
-    email: emailRules,
-    password: passwordRules
-});
-
-User.authRules = Joi.object({
-    email: emailRules,
-    password: passwordRules
-});
+/* eslint-disable */
+User.rules = Joi.object({ name, email, password });
+User.updateRules = Joi.object({ id, name, email, password });
+User.authRules = Joi.object({ email, password });
+/* eslint-enable */
 
 export default User;

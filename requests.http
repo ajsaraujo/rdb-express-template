@@ -19,18 +19,19 @@ GET http://localhost:8080/api/user/a9199d5a-dbf7-4c23-85b7-00164479a2b HTTP/1.1
 
 ### Atualizar dados do usuário
 PUT http://localhost:8080/api/user/ HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNTEyMzQyMDVkYzNkMWUyYzYxMzYxOCIsImlhdCI6MTU5OTI1MDAzOSwiZXhwIjoxNTk5MzM2NDM5fQ.szbbZRQpWAxdFvUUnZ1mrHGksMv5aKsXKXvpnYJSyEg
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdkN2UzNzIxLWM1NDMtNDU2OS1hY2FlLWY3NDk5MDBlODBkYiIsImlhdCI6MTYwMDQzNDg2MCwiZXhwIjoxNjAwNTIxMjYwfQ.gBXThNZv7EGWj0dfWHKTQ6rSHJ3v7KQTA9SM8ycMgE0
 content-type: application/json
 
 {
+    "id": "8d225ad1-6638-4330-84fb-c6e19ff8f035",
     "name": "Sófocles Teamildo Espírito Januário Cruz",
-    "email": "softeam1@gmail.com",
+    "email": "softeam4@gmail.com",
     "password": "thecakeislie"
 }
 
 ### Deletar usuário
 DELETE http://localhost:8080/api/user HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNTIyOWE3NmVhNTkwM2I2MGFlOTQ3MSIsImlhdCI6MTU5OTIyMDMxMywiZXhwIjoxNTk5MzA2NzEzfQ.n749Ukt5JTfKSiTRKzO-ho2pS1smDET1h-iXnj437z4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijc3MTZhNmQzLTBjMGMtNGM1Ni1hZDJlLTE1ZTJiYjZmZTI1OCIsImlhdCI6MTYwMDQzNDY1OCwiZXhwIjoxNjAwNTIxMDU4fQ.s_a1hPht8rJqNtSQS4IAabrsfy08xusYPKpJp1h9OWs
 
 ### Autenticar
 POST http://localhost:8080/api/auth HTTP/1.1
