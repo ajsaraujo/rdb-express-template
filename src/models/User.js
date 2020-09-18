@@ -1,4 +1,5 @@
 import { DataTypes, Model, UUIDV4 } from 'sequelize';
+import Joi from 'joi';
 
 class User extends Model {
     static init(sequelize) {
@@ -25,5 +26,19 @@ class User extends Model {
         }, { sequelize });
     }
 }
+
+const emailRules = Joi.string().email().required();
+const passwordRules = Joi.string().min(8).max(40).required();
+
+User.validationRules = Joi.object({
+    name: Joi.string().pattern(new RegExp('^[[A-Za-zÁÉÍÓÚáéíóúãõÃÕâêôÂÊÔ ]+$')).required(),
+    email: emailRules,
+    password: passwordRules
+});
+
+User.authRules = Joi.object({
+    email: emailRules,
+    password: passwordRules
+});
 
 export default User;
