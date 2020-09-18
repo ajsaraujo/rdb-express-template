@@ -1,6 +1,7 @@
+import { expect } from 'chai';
 import UserController from '../../../src/controllers/UserController';
 
-describe.skip('UserController', () => {
+describe('UserController', () => {
     let sandbox;
     let req;
     let res;
@@ -59,18 +60,18 @@ describe.skip('UserController', () => {
         });
 
         it('should return 500 if an error is thrown', async () => {
-            User.create.rejects({ message: 'Erro ao criar usuário' });
+            User.create.rejects({ message: 'Database file is locked' });
 
             await userController.create(req, res);
 
             expect(res.status.calledWith(500)).to.be.true;
-            expect(res.json.calledWith({ message: 'Erro ao criar usuário' })).to.be.true;
+            expect(res.json.calledWith({ message: 'Erro ao criar usuário: Database file is locked' })).to.be.true;
         });
     });
 
     describe('update()', () => {
         beforeEach(() => {
-            User.findById = sandbox.stub();
+            User.update = sandbox.stub();
             req.userId = '123456789000';
 
             req.body = {
@@ -81,7 +82,7 @@ describe.skip('UserController', () => {
         });
 
         it('should return 404 if user was not found', async () => {
-            User.findById.returns({ select: () => null });
+            User.update.resolves(null);
 
             await userController.update(req, res);
 
@@ -90,39 +91,30 @@ describe.skip('UserController', () => {
         });
 
         it('should return 200 and update user data', async () => {
-            const user = { save: sandbox.spy() };
-            User.findById.returns({ select: () => user });
+            User.update.resolves({});
 
             await userController.update(req, res);
 
-            const { email, name } = req.body;
-
-            expect(User.findById.calledWith(req.userId));
-            expect(user.name).to.equal(name);
-            expect(user.email).to.equal(email);
-            expect(user.password).to.be.undefined;
-            expect(user.save.calledOnce).to.be.true;
+            const call = User.update.getCall(0);
+            expect(call.args[0]).to.deep.equal(req.body);
+            expect(call.args[1]).to.deep.equal({ where: { id: req.userId } });
             expect(res.status.calledWith(200)).to.be.true;
-            expect(res.json.calledWith(user)).to.be.true;
+            expect(res.json.calledWith({ message: 'Usuário atualizado com sucesso.' })).to.be.true;
         });
 
         it('should return 500 if an error is thrown', async () => {
-            User.findById.returns({
-                select: () => {
-                    throw new Error('Erro ao buscar usuário');
-                }
-            });
+            User.update.rejects({ message: 'Database file is locked' });
 
             await userController.update(req, res);
 
             expect(res.status.calledWith(500)).to.be.true;
-            expect(res.json.calledWith({ message: 'Erro ao buscar usuário' })).to.be.true;
+            expect(res.json.calledWith({ message: 'Erro ao atualizar usuário: Database file is locked' })).to.be.true;
         });
     });
 
     describe('getAll()', () => {
         beforeEach(() => {
-            User.find = sandbox.stub();
+            User.findAll = sandbox.stub();
         });
 
         it('should return 200 and a list of users', async () => {
@@ -136,7 +128,7 @@ describe.skip('UserController', () => {
                 password: 'acabecadopovo'
             }];
 
-            User.find.resolves(users);
+            User.findAll.resolves(users);
 
             await userController.getAll(req, res);
 
@@ -145,7 +137,7 @@ describe.skip('UserController', () => {
         });
 
         it('should return 500 if an error is thrown', async () => {
-            User.find.rejects({ message: 'A busca falhou' });
+            User.findAll.rejects({ message: 'A busca falhou' });
 
             await userController.getAll(req, res);
 
@@ -156,12 +148,12 @@ describe.skip('UserController', () => {
 
     describe('getById()', async () => {
         beforeEach(() => {
-            User.findById = sandbox.stub();
+            User.findByPk = sandbox.stub();
             req.params.id = '123456789000';
         });
 
         it('should return 404 if user is not found', async () => {
-            User.findById.resolves(null);
+            User.findByPk.resolves(null);
 
             await userController.getById(req, res);
 
@@ -176,7 +168,7 @@ describe.skip('UserController', () => {
                 password: 'graaaaawrlllllnhaaauw'
             };
 
-            User.findById.resolves(user);
+            User.findByPk.resolves(user);
 
             await userController.getById(req, res);
 
@@ -185,28 +177,28 @@ describe.skip('UserController', () => {
         });
 
         it('should return 500 if an error is thrown', async () => {
-            User.findById.rejects({ message: 'Usuário não encontrado' });
+            User.findByPk.rejects({ message: 'Unable to connect to the database' });
 
             await userController.getById(req, res);
 
             expect(res.status.calledWith(500)).to.be.true;
-            expect(res.json.calledWith({ message: 'Usuário não encontrado' })).to.be.true;
+            expect(res.json.calledWith({ message: 'Erro ao buscar usuário: Unable to connect to the database' })).to.be.true;
         });
     });
 
     describe('remove()', () => {
         beforeEach(() => {
             req.userId = '123456789000';
-            User.findByIdAndRemove = sandbox.stub();
+            User.destroy = sandbox.stub();
         });
 
         it('should return 404 if user was not found', async () => {
-            User.findByIdAndRemove.resolves(null);
+            User.destroy.resolves(null);
 
             await userController.remove(req, res);
 
             expect(res.status.calledWith(404)).to.be.true;
-            expect(res.json.calledWith({ message: 'Usuário não encontrado.' })).to.be.true;
+            expect(res.json.calledWith({ message: `Não há nenhum usuário com o id ${req.userId}.` })).to.be.true;
         });
 
         it('should return 200 and delete the user with the given id', async () => {
@@ -216,22 +208,22 @@ describe.skip('UserController', () => {
                 password: 'senhaencriptada'
             };
 
-            User.findByIdAndRemove.resolves(user);
+            User.destroy.resolves({});
 
             await userController.remove(req, res);
 
-            expect(User.findByIdAndRemove.calledWith(req.userId)).to.be.true;
+            expect(User.destroy.calledWith({ where: { id: req.userId } })).to.be.true;
             expect(res.status.calledWith(200)).to.be.true;
-            expect(res.json.calledWith(user)).to.be.true;
+            expect(res.json.calledWith({ message: 'Usuário deletado com sucesso.' })).to.be.true;
         });
 
         it('should return 500 if an error is thrown', async () => {
-            User.findByIdAndRemove.rejects({ message: 'Não deu pra deletar =/' });
+            User.destroy.rejects({ message: 'Não deu pra deletar =/' });
 
             await userController.remove(req, res);
 
             expect(res.status.calledWith(500)).to.be.true;
-            expect(res.json.calledWith({ message: 'Não deu pra deletar =/' })).to.be.true;
+            expect(res.json.calledWith({ message: 'Erro ao deletar usuário: Não deu pra deletar =/' })).to.be.true;
         });
     });
 
