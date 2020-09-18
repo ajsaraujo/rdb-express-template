@@ -1,5 +1,6 @@
 import { DataTypes, Model, UUIDV4 } from 'sequelize';
 import Joi from 'joi';
+import PasswordUtils from '../utils/PasswordUtils';
 
 class User extends Model {
     static init(sequelize) {
@@ -26,6 +27,14 @@ class User extends Model {
         }, { sequelize });
     }
 }
+
+async function encryptPassword(user) {
+    // eslint-disable-next-line no-param-reassign
+    user.password = await PasswordUtils.encrypt(user.password);
+}
+
+User.beforeCreate(encryptPassword);
+User.beforeUpdate(encryptPassword);
 
 const emailRules = Joi.string().email().required();
 const passwordRules = Joi.string().min(8).max(40).required();

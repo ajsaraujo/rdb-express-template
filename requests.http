@@ -6,7 +6,7 @@ POST http://localhost:8080/api/register HTTP/1.1
 content-type: application/json
 
 {
-    "name": "Joãozinho da Goiaba"
+    "name": "Joãozinho da Goiaba",
     "email": "softeam1@gmail.com",
     "password": "thecakeisalie"
 }
