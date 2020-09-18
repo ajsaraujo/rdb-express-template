@@ -1,6 +1,6 @@
 import LogController from '../../../src/controllers/LogController';
 
-describe.skip('LogController', () => {
+describe('LogController', () => {
     let Log;
     let logController;
     let sandbox;
@@ -32,22 +32,22 @@ describe.skip('LogController', () => {
         it('should return 200 and find all logs', async () => {
             const logs = [{ content: 'O servidor papocou' }, { content: 'Eh resenha soh kkk' }];
 
-            Log.find.resolves(logs);
+            Log.findAll.resolves(logs);
 
             await logController.get(req, res);
 
-            expect(Log.find.getCall(0).args.length).to.equal(0);
+            expect(Log.findAll.getCall(0).args.length).to.equal(0);
             expect(res.status.calledWith(200)).to.be.true;
             expect(res.json.calledWith(logs)).to.be.true;
         });
 
         it('should return 500 if an error is thrown', async () => {
-            Log.find.rejects({ message: 'Rapaz tá tudo pegando fogo' });
+            Log.findAll.rejects({ message: 'Rapaz tá tudo pegando fogo' });
 
             await logController.get(req, res);
 
             expect(res.status.calledWith(500)).to.be.true;
-            expect(res.json.calledWith({ message: 'Rapaz tá tudo pegando fogo' })).to.be.true;
+            expect(res.json.calledWith({ message: 'Erro ao buscar logs: Rapaz tá tudo pegando fogo' })).to.be.true;
         });
     });
 
