@@ -1,6 +1,6 @@
 import verifyId from '../../../src/middlewares/verifyId';
 
-describe.skip('verifyId', () => {
+describe('verifyId', () => {
     let req;
     let res;
     let next;
@@ -20,16 +20,7 @@ describe.skip('verifyId', () => {
         await verifyId(req, res, next);
 
         expect(res.status.calledWith(400)).to.be.true;
-        expect(res.json.calledWith({ message: 'Nenhum id fornecido.' })).to.be.true;
-    });
-
-    it('should return 400 if object id is not valid', async () => {
-        req.params.id = '123456789000';
-
-        await verifyId(req, res, next);
-
-        expect(res.status.calledWith(400)).to.be.true;
-        expect(res.json.calledWith({ message: '123456789000 não é um id válido.' }));
+        expect(res.json.calledWith({ message: 'Você deve fornecer um id nos parâmetros da requisição.' })).to.be.true;
     });
 
     it('should return next if everything is ok', async () => {

@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import verifyToken from '../../../src/middlewares/verifyToken';
 
-describe.skip('verifyToken', () => {
+describe('verifyToken', () => {
     let sandbox;
 
     const isMalformed = TestUtils.getPrivateMethod(

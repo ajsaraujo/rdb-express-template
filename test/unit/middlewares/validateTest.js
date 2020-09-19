@@ -1,6 +1,6 @@
 import validate from '../../../src/middlewares/validate';
 
-describe.skip('validate', () => {
+describe('validate', () => {
     let sandbox;
     let req;
     let res;
