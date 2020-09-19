@@ -2,13 +2,13 @@ import User from '../models/User';
 
 async function emailInUse(req, res, next) {
     try {
-        const userArray = await User.findAll({
+        const user = await User.findOne({
             where: {
                 email: req.body.email
             }
         });
 
-        req.emailInUse = userArray.length > 0;
+        req.emailInUse = user !== null;
 
         return next();
     } catch ({ message }) {

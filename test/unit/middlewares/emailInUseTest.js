@@ -1,7 +1,7 @@
 import emailInUse from '../../../src/middlewares/emailInUse';
 import User from '../../../src/models/User';
 
-describe.skip('emailInUse', () => {
+describe('emailInUse', () => {
     let req;
     let res;
     let next;
@@ -24,7 +24,7 @@ describe.skip('emailInUse', () => {
     it('should find a user by email', async () => {
         await emailInUse(req, res, next);
 
-        expect(findStub.calledWith({ email: req.body.email })).to.be.true;
+        expect(findStub.calledWith({ where: { email: req.body.email } })).to.be.true;
     });
 
     it('should mark emailInUse as false if user is not found', async () => {
@@ -37,11 +37,11 @@ describe.skip('emailInUse', () => {
     });
 
     it('should mark emailInUse as true if user is found', async () => {
-        const user = new User({
+        const user = {
             name: 'Mize Ravi',
             email: 'mizeraviacerto@softeam.com.br',
             password: 'melancia'
-        });
+        };
 
         findStub.resolves(user);
 
@@ -57,7 +57,7 @@ describe.skip('emailInUse', () => {
         await emailInUse(req, res, next);
 
         expect(res.status.calledWith(500)).to.be.true;
-        expect(res.json.calledWith({ message: 'Deu certo não' })).to.be.true;
+        expect(res.json.calledWith({ message: 'Erro ao buscar usuário por email: Deu certo não' })).to.be.true;
     });
 
     afterEach(() => {
