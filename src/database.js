@@ -1,6 +1,7 @@
 import { Sequelize } from 'sequelize';
 import path from 'path';
 import DirectoryUtils from './utils/DirectoryUtils';
+import LogUtils from './utils/LogUtils';
 
 class Database {
     async initModels() {
@@ -23,14 +24,11 @@ class Database {
             logging: false
         });
 
-        try {
-            await this.sequelize.authenticate();
-            console.log('Conexão com o banco de dados estabelecida com sucesso.');
+        await this.sequelize.authenticate();
 
-            await this.initModels();
-        } catch ({ message }) {
-            console.error(`Erro ao conectar com o banco de dados: ${message}`);
-        }
+        LogUtils.log('Conexão com o banco de dados estabelecida com sucesso.');
+
+        await this.initModels();
     }
 }
 

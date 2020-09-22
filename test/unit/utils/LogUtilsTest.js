@@ -1,6 +1,7 @@
 import LogController from '../../../src/controllers/LogController';
+import LogUtils from '../../../src/utils/LogUtils';
 
-describe.skip('LogUtils', () => {
+describe('LogUtils', () => {
     let sandbox;
 
     beforeEach(() => {

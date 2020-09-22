@@ -1,11 +1,7 @@
 import Log from '../models/Log';
 
 async function create(content) {
-    try {
-        await Log.create({ content });
-    } catch ({ message }) {
-        console.log(`Erro ao criar log: ${message}`);
-    }
+    await Log.create({ content });
 }
 
 async function get(req, res) {
