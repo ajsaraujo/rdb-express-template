@@ -3,12 +3,13 @@ import User from '../../../src/models/User';
 import PasswordUtils from '../../../src/utils/PasswordUtils';
 import SessionController from '../../../src/controllers/SessionController';
 
-describe.skip('SessionController', () => {
+describe('SessionController', () => {
     describe('auth', () => {
         let req;
         let res;
         let sandbox;
         let findStub;
+        let matchStub;
 
         const mockUser = {
             email: 'juliao@softeam.com.br',
@@ -28,19 +29,19 @@ describe.skip('SessionController', () => {
             };
 
             findStub = sandbox.stub(User, 'findOne');
+            matchStub = sandbox.stub(PasswordUtils, 'match');
         });
 
         it('should find the user by email', async () => {
-            findStub.returns({ select: () => null });
+            findStub.resolves(null);
 
             await SessionController.auth(req, res);
 
-            expect(User.findOne.calledWith({ email: req.body.email })).to.be.true;
+            expect(User.findOne.calledWith({ where: { email: req.body.email } })).to.be.true;
         });
 
         it('should match the encrypted password against the provided password', async () => {
-            sandbox.stub(PasswordUtils, 'match');
-            findStub.returns({ select: () => mockUser });
+            findStub.resolves(mockUser);
 
             await SessionController.auth(req, res);
 
@@ -48,28 +49,29 @@ describe.skip('SessionController', () => {
         });
 
         it('should return 400 if user is not found', async () => {
-            findStub.returns({ select: () => null });
-            sandbox.stub(PasswordUtils, 'match').resolves(true);
+            findStub.resolves(null);
+            matchStub.resolves(true);
 
             const { status, json } = await SessionController.auth(req, res);
 
             expect(status).to.equal(400);
-            expect(json).to.deep.equal({ message: 'Email ou senha incorretos.' });
+            expect(json).to.deep.equal({ message: 'Email e/ou senha incorretos.' });
         });
 
         it('should return 400 if passwords do not match', async () => {
-            findStub.returns({ select: () => mockUser });
-            sandbox.stub(PasswordUtils, 'match').resolves(false);
+            findStub.resolves(mockUser);
+            matchStub.resolves(false);
 
             const { status, json } = await SessionController.auth(req, res);
 
             expect(status).to.equal(400);
-            expect(json).to.deep.equal({ message: 'Email ou senha incorretos.' });
+            expect(json).to.deep.equal({ message: 'Email e/ou senha incorretos.' });
         });
 
         it('should return 200 with the user and token', async () => {
-            findStub.returns({ select: () => mockUser });
-            sandbox.stub(PasswordUtils, 'match').resolves(true);
+            findStub.resolves(mockUser);
+            matchStub.resolves(true);
+
             sandbox.stub(jwt, 'sign').resolves('tokenemdoido');
 
             const userWithoutPassword = mockUser;
