@@ -5,12 +5,11 @@ import validate from '../middlewares/validate';
 import limitRequests from '../middlewares/limitRequests';
 
 const router = Router();
-const sessionController = new SessionController(User);
 
 router.post('/',
     limitRequests.heavily,
     validate(User.authRules),
-    (req, res) => sessionController.auth(req, res)
+    SessionController.auth
 );
 
 export default { router, name: '/auth' };

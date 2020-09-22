@@ -7,16 +7,15 @@ import limitRequests from '../middlewares/limitRequests';
 import verifyId from '../middlewares/verifyId';
 
 const router = Router();
-const userController = new UserController(User);
 
 router.use(limitRequests.slightly);
 
-router.get('/', (req, res) => userController.getAll(req, res));
-router.get('/:id', verifyId, (req, res) => userController.getById(req, res));
+router.get('/', UserController.getAll);
+router.get('/:id', verifyId, UserController.getById);
 
 router.use(verifyToken);
 
-router.put('/', validate(User.updateRules), (req, res) => userController.update(req, res));
-router.delete('/', (req, res) => userController.remove(req, res));
+router.put('/', validate(User.updateRules), UserController.update);
+router.delete('/', UserController.remove);
 
 export default { router, name: '/user' };
