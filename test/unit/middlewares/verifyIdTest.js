@@ -1,6 +1,6 @@
 import verifyId from '../../../src/middlewares/verifyId';
 
-describe.skip('verifyId', () => {
+describe('verifyId', () => {
     let sandbox;
     let req;
     let res;
@@ -18,23 +18,10 @@ describe.skip('verifyId', () => {
         const { json, status } = await verifyId(req, res, next);
 
         expect(status).to.equal(400);
-        expect(json).to.deep.equal({ message: 'Nenhum id fornecido.' });
+        expect(json).to.deep.equal({ message: 'Você deve fornecer um id nos parâmetros da requisição.' });
     });
 
-    it('should return 400 if object id is not valid', async () => {
-        sandbox.stub(Types.ObjectId, 'isValid').returns(false);
-
-        req.params.id = '123456789000';
-
-        const { json, status } = await verifyId(req, res, next);
-
-        expect(status).to.equal(400);
-        expect(json).to.deep.equal({ message: '123456789000 não é um id válido.' });
-    });
-
-    it('should return next if everything is ok', async () => {
-        sandbox.stub(Types.ObjectId, 'isValid').returns(true);
-
+    it('should return next if an id was provided', async () => {
         req.params.id = '123456789000';
 
         await verifyId(req, res, next);
