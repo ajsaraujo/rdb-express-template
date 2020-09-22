@@ -35,7 +35,7 @@ async function remove(req, res) {
         const user = await User.destroy({ where: { id: req.userId } });
 
         if (user === null) {
-            return res.status(404).json({ message: `Não há nenhum usuário com o id ${req.userId}.` });
+            return res.status(404).json({ message: `Não há usuário com o id ${req.userId}.` });
         }
 
         return res.status(200).json({ message: 'Usuário deletado com sucesso.' });

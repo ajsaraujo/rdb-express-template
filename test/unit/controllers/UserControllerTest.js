@@ -112,11 +112,11 @@ describe('UserController', () => {
         });
     });
 
-    describe.skip('getAll()', () => {
+    describe('getAll()', () => {
         let findStub;
 
         beforeEach(() => {
-            findStub = sandbox.stub(User, 'find');
+            findStub = sandbox.stub(User, 'findAll');
         });
 
         it('should return 200 and a list of users', async () => {
@@ -148,11 +148,11 @@ describe('UserController', () => {
         });
     });
 
-    describe.skip('getById()', async () => {
+    describe('getById()', async () => {
         let findStub;
 
         beforeEach(() => {
-            findStub = sandbox.stub(User, 'findById');
+            findStub = sandbox.stub(User, 'findByPk');
             req.params.id = '123456789000';
         });
 
@@ -185,16 +185,16 @@ describe('UserController', () => {
             const { status, json } = await UserController.getById(req, res);
 
             expect(status).to.equal(500);
-            expect(json).to.deep.equal({ message: 'Usuário não encontrado' });
+            expect(json).to.deep.equal({ message: 'Erro ao buscar usuário: Usuário não encontrado' });
         });
     });
 
-    describe.skip('remove()', () => {
+    describe('remove()', () => {
         let removeStub;
 
         beforeEach(() => {
             req.userId = '123456789000';
-            removeStub = sandbox.stub(User, 'findByIdAndRemove');
+            removeStub = sandbox.stub(User, 'destroy');
         });
 
         it('should return 404 if user was not found', async () => {
@@ -203,23 +203,17 @@ describe('UserController', () => {
             const { status, json } = await UserController.remove(req, res);
 
             expect(status).to.equal(404);
-            expect(json).to.deep.equal({ message: 'Usuário não encontrado.' });
+            expect(json).to.deep.equal({ message: `Não há usuário com o id ${req.userId}.` });
         });
 
-        it('should return 200 and delete the user with the given id', async () => {
-            const user = {
-                name: 'Mor Tod Asilva',
-                email: 'mortodasilva@softeam.com.br',
-                password: 'senhaencriptada'
-            };
-
-            removeStub.resolves(user);
+        it('should return 200 if everything is fine', async () => {
+            removeStub.resolves({});
 
             const { status, json } = await UserController.remove(req, res);
 
-            expect(removeStub.calledWith(req.userId)).to.be.true;
+            expect(removeStub.calledWith({ where: { id: req.userId } })).to.be.true;
             expect(status).to.equal(200);
-            expect(json).to.deep.equal(user);
+            expect(json).to.deep.equal({ message: 'Usuário deletado com sucesso.' });
         });
 
         it('should return 500 if an error is thrown', async () => {
@@ -228,7 +222,7 @@ describe('UserController', () => {
             const { status, json } = await UserController.remove(req, res);
 
             expect(status).to.equal(500);
-            expect(json).to.deep.equal({ message: 'Não deu pra deletar =/' });
+            expect(json).to.deep.equal({ message: 'Erro ao deletar usuário: Não deu pra deletar =/' });
         });
     });
 
