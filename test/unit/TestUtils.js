@@ -1,17 +1,28 @@
 /* eslint-disable no-underscore-dangle */
 import rewire from 'rewire';
 
-function mockReqRes(sandbox) {
-    const req = { params: {}, headers: {} };
+function mockReq() {
+    return { params: {}, headers: {} };
+}
 
-    const res = {
-        status: sandbox.stub().callsFake(() => res),
-        json: sandbox.stub().callsFake(returnItself)
+function mockRes() {
+    const Response = class Response {
+        status(statusCode) {
+            this.status = statusCode;
+            return this;
+        }
+
+        json(data) {
+            this.json = data;
+            return this;
+        }
     };
 
-    const next = sandbox.stub();
+    return new Response();
+}
 
-    return { req, res, next };
+function mockNext(sandbox) {
+    return sandbox.stub();
 }
 
 function getPrivateMethod(modulePath, methodName) {
@@ -30,4 +41,10 @@ function stubPrivateMethod(sandbox, modulePath, methodName) {
     return stub;
 }
 
-export default { mockReqRes, getPrivateMethod, stubPrivateMethod };
+export default {
+    mockReq,
+    mockRes,
+    mockNext,
+    getPrivateMethod,
+    stubPrivateMethod
+};

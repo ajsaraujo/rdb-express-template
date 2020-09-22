@@ -1,27 +1,24 @@
 import { expect } from 'chai';
 import UserController from '../../../src/controllers/UserController';
+import User from '../../../src/models/User';
 
-describe('UserController', () => {
+describe.skip('UserController', () => {
     let sandbox;
     let req;
     let res;
-    let User;
-    let userController;
 
     beforeEach(() => {
         sandbox = createSandbox();
 
-        User = {};
-        userController = new UserController(User);
-
-        const mocks = TestUtils.mockReqRes(sandbox);
-        req = mocks.req;
-        res = mocks.res;
+        req = TestUtils.mockReq();
+        res = TestUtils.mockRes();
     });
 
     describe('create()', () => {
+        let createStub;
+
         beforeEach(() => {
-            User.create = sandbox.stub();
+            createStub = sandbox.stub(User, 'create');
 
             req.body = {
                 name: 'Sófocles Teamildo',
@@ -35,43 +32,46 @@ describe('UserController', () => {
         it('should return 400 if email is already in use', async () => {
             req.emailInUse = true;
 
-            await userController.create(req, res);
+            const { status, json } = await UserController.create(req, res);
 
-            expect(res.status.calledWith(400)).to.be.true;
-            expect(res.json.calledWith({ message: 'O email softeam@softeam.com.br já está em uso.' })).to.be.true;
+            expect(status).to.equal(400);
+            expect(json).to.deep.equal({ message: 'O email softeam@softeam.com.br já está em uso.' });
         });
 
         it('should return 200 and create user', async () => {
-            User.create.callsFake(returnItself);
+            createStub.resolves(req.body);
 
-            await userController.create(req, res);
+            const { status, json } = await UserController.create(req, res);
 
-            expect(User.create.calledWith(req.body)).to.be.true;
-            expect(res.status.calledWith(201)).to.be.true;
-            expect(res.json.calledWith(req.body)).to.be.true;
+            expect(createStub.calledWith(req.body)).to.be.true;
+            expect(status).to.equal(201);
+            expect(json).to.deep.equal(req.body);
         });
 
         it('should not return the user password', async () => {
-            User.create.callsFake(returnItself);
+            createStub.callsFake(arg => arg);
 
-            const jsonData = await userController.create(req, res);
+            const { json } = await UserController.create(req, res);
 
-            expect(jsonData.password).to.be.undefined;
+            expect(json.password).to.be.undefined;
         });
 
         it('should return 500 if an error is thrown', async () => {
-            User.create.rejects({ message: 'Database file is locked' });
+            createStub.rejects({ message: 'Erro ao criar usuário' });
 
-            await userController.create(req, res);
+            const { status, json } = await UserController.create(req, res);
 
-            expect(res.status.calledWith(500)).to.be.true;
-            expect(res.json.calledWith({ message: 'Erro ao criar usuário: Database file is locked' })).to.be.true;
+            expect(status).to.equal(500);
+            expect(json).to.deep.equal({ message: 'Erro ao criar usuário' });
         });
     });
 
     describe('update()', () => {
+        let findStub;
+
         beforeEach(() => {
-            User.update = sandbox.stub();
+            findStub = sandbox.stub(User, 'findById');
+
             req.userId = '123456789000';
 
             req.body = {
@@ -82,39 +82,46 @@ describe('UserController', () => {
         });
 
         it('should return 404 if user was not found', async () => {
-            User.update.resolves(null);
+            findStub.returns({ select: () => null });
 
-            await userController.update(req, res);
+            const { status, json } = await UserController.update(req, res);
 
-            expect(res.status.calledWith(404)).to.be.true;
-            expect(res.json.calledWith({ message: `Não foi encontrado usuário com o id ${req.userId}` }));
+            expect(status).to.equal(404);
+            expect(json).to.deep.equal({ message: `Não foi encontrado usuário com o id ${req.userId}` });
         });
 
         it('should return 200 and update user data', async () => {
-            User.update.resolves({});
+            const user = { save: sandbox.spy() };
+            findStub.returns({ select: () => user });
 
-            await userController.update(req, res);
+            const { status, json } = await UserController.update(req, res);
 
-            const call = User.update.getCall(0);
-            expect(call.args[0]).to.deep.equal(req.body);
-            expect(call.args[1]).to.deep.equal({ where: { id: req.userId } });
-            expect(res.status.calledWith(200)).to.be.true;
-            expect(res.json.calledWith({ message: 'Usuário atualizado com sucesso.' })).to.be.true;
+            expect(findStub.calledWith(req.userId));
+            expect(user.save.calledOnce).to.be.true;
+            expect([user.name, user.email]).to.deep.equal([req.body.name, req.body.email]);
+            expect(json.password).to.be.undefined;
+            expect(status).to.equal(200);
         });
 
         it('should return 500 if an error is thrown', async () => {
-            User.update.rejects({ message: 'Database file is locked' });
+            findStub.returns({
+                select: () => {
+                    throw new Error('Erro ao buscar usuário');
+                }
+            });
 
-            await userController.update(req, res);
+            const { status, json } = await UserController.update(req, res);
 
-            expect(res.status.calledWith(500)).to.be.true;
-            expect(res.json.calledWith({ message: 'Erro ao atualizar usuário: Database file is locked' })).to.be.true;
+            expect(status).to.equal(500);
+            expect(json).to.deep.equal({ message: 'Erro ao buscar usuário' });
         });
     });
 
     describe('getAll()', () => {
+        let findStub;
+
         beforeEach(() => {
-            User.findAll = sandbox.stub();
+            findStub = sandbox.stub(User, 'find');
         });
 
         it('should return 200 and a list of users', async () => {
@@ -128,38 +135,39 @@ describe('UserController', () => {
                 password: 'acabecadopovo'
             }];
 
-            User.findAll.resolves(users);
+            findStub.resolves(users);
 
-            await userController.getAll(req, res);
+            const { status, json } = await UserController.getAll(req, res);
 
-            expect(res.status.calledWith(200)).to.be.true;
-            expect(res.json.calledWith(users)).to.be.true;
+            expect(status).to.equal(200);
+            expect(json).to.deep.equal(users);
         });
 
         it('should return 500 if an error is thrown', async () => {
-            User.findAll.rejects({ message: 'A busca falhou' });
+            findStub.rejects({ message: 'A busca falhou' });
 
-            await userController.getAll(req, res);
+            const { status, json } = await UserController.getAll(req, res);
 
-            expect(res.status.calledWith(500)).to.be.true;
-            expect(res.json.calledWith({ message: 'A busca falhou' })).to.be.true;
+            expect(status).to.equal(500);
+            expect(json).to.deep.equal({ message: 'A busca falhou' });
         });
     });
 
     describe('getById()', async () => {
+        let findStub;
+
         beforeEach(() => {
-            User.findByPk = sandbox.stub();
+            findStub = sandbox.stub(User, 'findById');
             req.params.id = '123456789000';
         });
 
         it('should return 404 if user is not found', async () => {
-            User.findByPk.resolves(null);
+            findStub.resolves(null);
 
-            await userController.getById(req, res);
+            const { status, json } = await UserController.getById(req, res);
 
-            expect(res.status.calledWith(404)).to.be.true;
-            expect(res.json.calledWith({ message: `Não há usuário com o id ${req.params.id}.` }));
-        });
+            expect(status).to.equal(404);
+            expect(json).to.deep.equal({ message: `Não há usuário com o id ${req.params.id}.` });  });
 
         it('should return 200 and user', async () => {
             const user = {
@@ -168,37 +176,39 @@ describe('UserController', () => {
                 password: 'graaaaawrlllllnhaaauw'
             };
 
-            User.findByPk.resolves(user);
+            findStub.resolves(user);
 
-            await userController.getById(req, res);
+            const { status, json } = await UserController.getById(req, res);
 
-            expect(res.status.calledWith(200)).to.be.true;
-            expect(res.json.calledWith(user)).to.be.true;
+            expect(status).to.equal(200);
+            expect(json).to.deep.equal(user);
         });
 
         it('should return 500 if an error is thrown', async () => {
-            User.findByPk.rejects({ message: 'Unable to connect to the database' });
+            findStub.rejects({ message: 'Usuário não encontrado' });
 
-            await userController.getById(req, res);
+            const { status, json } = await UserController.getById(req, res);
 
-            expect(res.status.calledWith(500)).to.be.true;
-            expect(res.json.calledWith({ message: 'Erro ao buscar usuário: Unable to connect to the database' })).to.be.true;
+            expect(status).to.equal(500);
+            expect(json).to.deep.equal({ message: 'Usuário não encontrado' });
         });
     });
 
     describe('remove()', () => {
+        let removeStub;
+
         beforeEach(() => {
             req.userId = '123456789000';
-            User.destroy = sandbox.stub();
+            removeStub = sandbox.stub(User, 'findByIdAndRemove');
         });
 
         it('should return 404 if user was not found', async () => {
-            User.destroy.resolves(null);
+            removeStub.resolves(null);
 
-            await userController.remove(req, res);
+            const { status, json } = await UserController.remove(req, res);
 
-            expect(res.status.calledWith(404)).to.be.true;
-            expect(res.json.calledWith({ message: `Não há nenhum usuário com o id ${req.userId}.` })).to.be.true;
+            expect(status).to.equal(404);
+            expect(json).to.deep.equal({ message: 'Usuário não encontrado.' });
         });
 
         it('should return 200 and delete the user with the given id', async () => {
@@ -208,22 +218,22 @@ describe('UserController', () => {
                 password: 'senhaencriptada'
             };
 
-            User.destroy.resolves({});
+            removeStub.resolves(user);
 
-            await userController.remove(req, res);
+            const { status, json } = await UserController.remove(req, res);
 
-            expect(User.destroy.calledWith({ where: { id: req.userId } })).to.be.true;
-            expect(res.status.calledWith(200)).to.be.true;
-            expect(res.json.calledWith({ message: 'Usuário deletado com sucesso.' })).to.be.true;
+            expect(removeStub.calledWith(req.userId)).to.be.true;
+            expect(status).to.equal(200);
+            expect(json).to.deep.equal(user);
         });
 
         it('should return 500 if an error is thrown', async () => {
-            User.destroy.rejects({ message: 'Não deu pra deletar =/' });
+            removeStub.rejects({ message: 'Não deu pra deletar =/' });
 
-            await userController.remove(req, res);
+            const { status, json } = await UserController.remove(req, res);
 
-            expect(res.status.calledWith(500)).to.be.true;
-            expect(res.json.calledWith({ message: 'Erro ao deletar usuário: Não deu pra deletar =/' })).to.be.true;
+            expect(status).to.equal(500);
+            expect(json).to.deep.equal({ message: 'Não deu pra deletar =/' });
         });
     });
 
