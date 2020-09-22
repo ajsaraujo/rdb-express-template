@@ -21,7 +21,7 @@ async function update(req, res) {
         const user = await User.update(req.body, { where: { id: req.userId } });
 
         if (user === null) {
-            return res.status(404).json({ message: `Não há nenhum usuário com o id ${req.userId}.` });
+            return res.status(404).json({ message: `Não foi encontrado usuário com o id ${req.userId}.` });
         }
 
         return res.status(200).json({ message: 'Usuário atualizado com sucesso.' });

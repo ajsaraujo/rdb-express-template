@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import UserController from '../../../src/controllers/UserController';
 import User from '../../../src/models/User';
 
-describe.skip('UserController', () => {
+describe('UserController', () => {
     let sandbox;
     let req;
     let res;
@@ -57,20 +57,20 @@ describe.skip('UserController', () => {
         });
 
         it('should return 500 if an error is thrown', async () => {
-            createStub.rejects({ message: 'Erro ao criar usuário' });
+            createStub.rejects({ message: 'Falha ao conectar com bd' });
 
             const { status, json } = await UserController.create(req, res);
 
             expect(status).to.equal(500);
-            expect(json).to.deep.equal({ message: 'Erro ao criar usuário' });
+            expect(json).to.deep.equal({ message: 'Erro ao criar usuário: Falha ao conectar com bd' });
         });
     });
 
     describe('update()', () => {
-        let findStub;
+        let updateStub;
 
         beforeEach(() => {
-            findStub = sandbox.stub(User, 'findById');
+            updateStub = sandbox.stub(User, 'update');
 
             req.userId = '123456789000';
 
@@ -82,42 +82,37 @@ describe.skip('UserController', () => {
         });
 
         it('should return 404 if user was not found', async () => {
-            findStub.returns({ select: () => null });
+            updateStub.resolves(null);
 
             const { status, json } = await UserController.update(req, res);
 
             expect(status).to.equal(404);
-            expect(json).to.deep.equal({ message: `Não foi encontrado usuário com o id ${req.userId}` });
+            expect(json).to.deep.equal({ message: `Não foi encontrado usuário com o id ${req.userId}.` });
         });
 
         it('should return 200 and update user data', async () => {
-            const user = { save: sandbox.spy() };
-            findStub.returns({ select: () => user });
+            updateStub.resolves({});
 
             const { status, json } = await UserController.update(req, res);
 
-            expect(findStub.calledWith(req.userId));
-            expect(user.save.calledOnce).to.be.true;
-            expect([user.name, user.email]).to.deep.equal([req.body.name, req.body.email]);
+            const { args } = updateStub.getCall(0);
+
+            expect(args).to.deep.equal([req.body, { where: { id: req.userId } }]);
             expect(json.password).to.be.undefined;
             expect(status).to.equal(200);
         });
 
         it('should return 500 if an error is thrown', async () => {
-            findStub.returns({
-                select: () => {
-                    throw new Error('Erro ao buscar usuário');
-                }
-            });
+            updateStub.rejects({ message: 'ERR_CONNECTION_ERROR' });
 
             const { status, json } = await UserController.update(req, res);
 
             expect(status).to.equal(500);
-            expect(json).to.deep.equal({ message: 'Erro ao buscar usuário' });
+            expect(json).to.deep.equal({ message: 'Erro ao atualizar usuário: ERR_CONNECTION_ERROR' });
         });
     });
 
-    describe('getAll()', () => {
+    describe.skip('getAll()', () => {
         let findStub;
 
         beforeEach(() => {
@@ -153,7 +148,7 @@ describe.skip('UserController', () => {
         });
     });
 
-    describe('getById()', async () => {
+    describe.skip('getById()', async () => {
         let findStub;
 
         beforeEach(() => {
@@ -194,7 +189,7 @@ describe.skip('UserController', () => {
         });
     });
 
-    describe('remove()', () => {
+    describe.skip('remove()', () => {
         let removeStub;
 
         beforeEach(() => {
