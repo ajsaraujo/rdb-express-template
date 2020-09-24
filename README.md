@@ -157,6 +157,8 @@ Criamos um _router_ que irá servir o endpoint `/product`. Então, associamos ca
 - [babel](https://www.npmjs.com/package/babel)
 - [chai](https://www.npmjs.com/package/chai)
 - [eslint](https://www.npmjs.com/package/eslint)
+- [husky](https://www.npmjs.com/package/husky)
+- [lint-staged](https://www.npmjs.com/package/lint-staged)
 - [mocha](https://www.npmjs.com/package/mocha)
 - [rewire](https://www.npmjs.com/package/rewire)
 - [sinon](https://www.npmjs.com/package/sinon)
